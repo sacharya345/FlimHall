@@ -1,5 +1,7 @@
 import express from "express";
 import cors from "cors";
+import apiRoutes from "./routes/index.js";
+import { errorHandler } from "./middleware/errorHandler.js";
 
 const app = express();
 
@@ -13,11 +15,7 @@ app.get("/", (req, res) => {
   res.send("Welcome to FlimHall API!");
 });
 
-app.get("/api/health", (req, res) => {
-  res.json({
-    status: "ok",
-    service: "flimhall-api"
-  });
-});
+app.use("/api", apiRoutes);
+app.use(errorHandler);
 
 export default app;
