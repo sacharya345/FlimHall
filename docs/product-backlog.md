@@ -19,7 +19,7 @@ Priority: Must
 
 Acceptance criteria:
 - The system displays the movie description, genre, duration, and age rating when available.
-- Movie details correspond to selected movie.
+- Movie details correspond to the selected movie.
 
 ### US03 — Search Movies
 User story: As a customer, I want to search for movies by title so that I can find a particular movie.
