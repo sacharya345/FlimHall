@@ -10,7 +10,7 @@ Priority: Must
 Acceptance criteria:
 - The system displays available movies.
 - Each movie displays its title and poster when available.
-- Selecting a movie shows its details.
+- Selecting a movie opens its details.
 
 ### US02 — View Movie Details
 User story: As a customer, I want to view movie details so that I can decide whether to watch a movie.
