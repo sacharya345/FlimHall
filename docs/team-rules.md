@@ -8,7 +8,7 @@ Status: Proposed; confirm with the whole team.
 - Keep pull requests focused and request at least one teammate review before
   merging, where team size allows.
 - Keep secrets and local environment files out of Git; use `.env.example` for
-  variable names and safe placeholders.
+  variable names and placeholders.
 - Validate user input and protect customer booking information.
 - Update requirements, backlog acceptance criteria, and setup documentation
   when the agreed behavior changes.
