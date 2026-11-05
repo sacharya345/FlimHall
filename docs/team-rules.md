@@ -11,7 +11,7 @@ Status: Proposed; confirm with the whole team.
   variable names and placeholders.
 - Validate user input and protect customer booking information.
 - Update requirements, backlog acceptance criteria, and setup documentation
-  when the agreed behavior changes.
+  when the behavior changes.
 - Raise blockers and record decisions so the team and supervisor can follow
   progress.
 
