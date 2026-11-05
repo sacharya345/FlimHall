@@ -13,7 +13,7 @@ All three team members should participate in:
 - Code reviews and GitHub collaboration.
 - Testing and bug fixing.
 - Documentation and final presentation.
-- Azure deployment and release preparation.
+- Azure deployment & release preparation.
 
 
 Working agreements
