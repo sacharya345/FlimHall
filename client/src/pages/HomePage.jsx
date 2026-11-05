@@ -40,13 +40,6 @@ export default function HomePage() {
             <button className="secondary-btn">View shows</button>
           </div>
 
-          <div className="status-card">
-            <span className="status-label">API status</span>
-            <strong>
-              {loading ? 'Checking...' : health?.status || 'offline'}
-            </strong>
-            <small>{health?.service || 'flimhall-api'}</small>
-          </div>
         </div>
 
         <div className="hero-panel">
