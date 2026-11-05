@@ -13,7 +13,7 @@ Acceptance criteria:
 - Selecting a movie opensit pus its details.
 
 ### US02 — View Movie Details
-User story: As a customer, I want to view movie details so that I can decide whether to watch a movie or not.
+User story: As a customer, I want to view movie details so that I can decide whether to watch a movie.
 
 Priority: Must
 
