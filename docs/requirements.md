@@ -37,7 +37,7 @@ FR8: The system shall allow customers to enter the information required to make 
 
 FR9: The system shall allow customers to confirm a booking and receive a unique booking reference.
 
-FR10: The system shall allow customers to retrieve their booking details using a booking reference and appropriate verification information.
+FR10: The system shall allow customers to retrieve their booking details using a booking reference and appropriate verification informations.
 
 ### Theater Management Features
 
