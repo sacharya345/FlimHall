@@ -6,10 +6,10 @@ import { errorHandler } from "./middleware/errorHandler.js";
 const app = express();
 
 app.use(cors({
-  origin: "http://localhost:5173"
+  origin: process.env.CLIENT_ORIGIN || 'http://localhost:5173'
 }));
 
-app.use(express.json());
+app.use(express.json({ limit: '1mb' }));
 
 app.get("/", (req, res) => {
   res.send("Welcome to FlimHall API!");
