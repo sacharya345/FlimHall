@@ -31,8 +31,8 @@ The frontend runs at `http://localhost:5173` and the API at
 `http://localhost:3000/api/health`.
 
 ## Project structure
-- `client/` contains the frontend application
-- `server/` contains the API layer and business logic
+- `client/` contains of the frontend application
+- `server/` contains of the API layer and business logic
 - `database/` contains schema and seed-related files
 - `docs/` contains project planning and requirements assets
 
