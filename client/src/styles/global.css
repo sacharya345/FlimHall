@@ -254,45 +254,87 @@ a { color: inherit; }
   .admin-grid { grid-template-columns: 1fr; }
   .bookings-card { grid-column: auto; }
 }
+
 @media (max-width: 520px) {
-  .site-shell { width: calc(100% - 28px); }
+  .site-shell { width: calc(100% - 32px); }
   .topbar { min-height: 74px; flex-wrap: wrap; gap: 10px; padding: 12px 0; }
-  .brand { margin-right: auto; }
-  .brand-mark { width: 34px; height: 34px; }
+  .brand { min-width: 0; margin-right: auto; }
+  .brand-mark { width: 36px; height: 36px; flex: 0 0 auto; }
   .brand strong { font-size: 15px; }
-  .header-cta { padding: 9px 10px; font-size: 10px; }
-  .nav { order: 3; width: 100%; justify-content: space-between; gap: 10px; }
-  .nav-link { font-size: 11px; }
-  .hero { min-height: 650px; }
-  .hero h1 { font-size: 54px; letter-spacing: -3.4px; }
-  .hero-content > p { font-size: 13px; }
+  .header-cta { display: inline-flex; min-height: 44px; align-items: center; padding: 0 10px; font-size: 10px; }
+  .header-cta span { margin-left: 6px; }
+  .nav { order: 3; width: 100%; justify-content: space-between; gap: 4px; }
+  .nav-link { min-height: 44px; padding: 10px 6px; font-size: 12px; }
+  .hero { min-height: 0; padding-bottom: 20px; }
+  .hero-content { padding: 50px 0 0; }
+  .hero h1 { font-size: clamp(40px, 11vw, 54px); letter-spacing: -.065em; }
+  .hero-content > p { max-width: 36rem; font-size: 14px; }
+  .hero-content .button { min-height: 48px; }
   .hero-art { min-height: 250px; }
-  .film-frame { width: 190px; min-height: 220px; padding: 17px; }
-  .film-frame strong { font-size: 30px; }
+  .film-frame { width: min(190px, 68vw); min-height: 220px; padding: 17px; }
+  .film-frame strong { font-size: clamp(26px, 8vw, 30px); }
+  .hero-orbit.orbit-one { width: min(310px, 90vw); }
+  .hero-orbit.orbit-two { width: min(350px, 96vw); }
   .hero-foot { display: none; }
-  .movie-section { padding: 54px 0 45px; }
+  .movie-section { padding: 48px 0 40px; }
   .section-heading { align-items: start; flex-direction: column; gap: 8px; }
-  .section-heading h2 { font-size: 29px; }
-  .filters { flex-direction: column; }
-  .genre-field { min-width: 0; }
-  .movie-grid { grid-template-columns: 1fr; }
-  .movie-art { height: 245px; }
-  .details-section { padding: 18px 14px; }
-  .details-header h2 { font-size: 25px; }
+  .section-heading h2 { font-size: clamp(27px, 8vw, 32px); }
+  .filters { flex-direction: column; gap: 10px; margin: 22px 0; }
+  .search-field, .genre-field { min-width: 0; min-height: 48px; }
+  .search-field input, .genre-field select { min-height: 48px; font-size: 16px; }
+  .movie-grid { grid-template-columns: minmax(0, 1fr); gap: 14px; }
+  .movie-art { height: auto; aspect-ratio: 16 / 10; }
+  .movie-card-copy { padding: 15px; }
+  .text-button { min-height: 40px; }
+  .details-section { margin-bottom: 42px; padding: 18px 14px; }
+  .details-header { gap: 12px; }
+  .details-header h2 { overflow-wrap: anywhere; font-size: clamp(22px, 7vw, 27px); }
+  .details-header p { line-height: 1.6; }
+  .icon-button { flex: 0 0 auto; width: 40px; height: 40px; }
   .screening-list { display: grid; }
-  .screening-option { min-width: 0; }
-  .seat-map { gap: 5px; }
-  .seat { font-size: 8px; }
-  .seat-legend { gap: 10px; font-size: 9px; }
-  .booking-form { grid-template-columns: 1fr; }
-  .booking-form label, .booking-form > .button, .booking-total { grid-column: 1; }
-  .site-footer { gap: 10px; font-size: 7px; letter-spacing: .6px; }
-  .workspace-section { padding: 55px 0; }
-  .workspace-section > h1 { font-size: 42px; }
-  .staff-heading { align-items: start; flex-direction: column; }
-  .admin-card { padding: 17px 13px; }
+  .screening-option { min-width: 0; min-height: 56px; gap: 6px 10px; }
+  .screening-option > span { min-width: 0; font-size: 11px; }
+  .screening-option small { overflow-wrap: anywhere; }
+  .seat-heading { align-items: center; gap: 12px; }
+  .seat-heading h3 { font-size: 18px; }
+  .screen-label { width: 40%; }
+  .seat-map { width: 100%; grid-template-columns: repeat(10, minmax(28px, 1fr)); gap: 4px; overflow-x: auto; }
+  .seat { min-height: 36px; aspect-ratio: auto; font-size: 9px; }
+  .seat-legend { flex-wrap: wrap; gap: 8px 14px; font-size: 10px; }
+  .booking-form { grid-template-columns: minmax(0, 1fr); }
+  .booking-form label, .booking-form > .button, .booking-total { min-width: 0; grid-column: 1; }
+  .booking-form input, .stack-form input, .stack-form textarea, .stack-form select { min-height: 46px; font-size: 16px; }
+  .booking-total { align-items: start; gap: 12px; overflow-wrap: anywhere; }
+  .booking-total strong { flex: 0 0 auto; }
+  .booking-form > .button, .stack-form > .button, .form-actions .button { min-height: 48px; }
+  .booking-receipt { gap: 12px; padding: 16px; }
+  .booking-receipt h3 { font-size: 18px; }
+  .booking-receipt p { overflow-wrap: anywhere; line-height: 1.6; }
+  .site-footer { align-items: start; flex-direction: column; gap: 8px; padding: 20px 0; font-size: 9px; letter-spacing: .7px; }
+  .site-footer button { min-height: 40px; }
+  .workspace-section { min-height: calc(100vh - 74px); padding: 48px 0; }
+  .workspace-section > h1, .staff-heading h1 { font-size: clamp(34px, 10vw, 44px); letter-spacing: -.07em; overflow-wrap: anywhere; }
+  .workspace-intro { line-height: 1.7; }
+  .result-card { padding: 18px; }
+  .result-card p { overflow-wrap: anywhere; line-height: 1.6; }
+  .staff-heading { align-items: start; flex-direction: column; gap: 14px; }
+  .admin-card { padding: 18px 14px; }
+  .admin-card h2 { font-size: 20px; }
   .form-row { flex-direction: column; }
+  .form-actions { flex-direction: column; }
   .admin-list-row { align-items: start; flex-direction: column; }
-  .row-actions { align-self: end; }
-  .booking-row > .text-button { align-self: end; }
+  .admin-list-row > span:first-child { width: 100%; overflow-wrap: anywhere; }
+  .row-actions { align-self: stretch; justify-content: flex-end; gap: 16px; }
+  .row-actions .text-button, .booking-row > .text-button { min-height: 40px; }
+  .booking-row > .text-button { align-self: stretch; text-align: right; }
+}
+
+@media (max-width: 360px) {
+  .site-shell { width: calc(100% - 24px); }
+  .brand-tag { font-size: 7px; letter-spacing: 1px; }
+  .nav-link { padding-inline: 3px; font-size: 11px; }
+  .hero h1 { font-size: 40px; }
+  .seat-map { grid-template-columns: repeat(10, minmax(26px, 1fr)); }
+  .seat-legend { justify-content: flex-start; }
+  .booking-total { flex-direction: column; }
 }
