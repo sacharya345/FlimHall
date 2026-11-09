@@ -23,6 +23,7 @@ try {
   }
 
   await runSql('../../../database/migrations/001_init.sql');
+  await runSql('../../../database/migrations/002_movie_release_year.sql');
   await runSql('../../../database/seeds/001_demo_data.sql');
 
   if (adminEmail) {
