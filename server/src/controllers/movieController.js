@@ -9,6 +9,7 @@ export async function listMovies(req, res) {
   }
   const { rows } = await pool.query(
     `SELECT m.id, m.title, m.description, m.genre, m.duration_min, m.age_rating,
+            m.release_year,
             m.poster_url, m.created_at,
             EXISTS (
               SELECT 1 FROM screenings s

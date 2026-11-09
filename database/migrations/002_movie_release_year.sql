@@ -1,0 +1,3 @@
+ALTER TABLE movies
+ADD COLUMN IF NOT EXISTS release_year INTEGER
+CHECK (release_year BETWEEN 1888 AND 2100);
