@@ -5,7 +5,7 @@ frontend, an Express API, and PostgreSQL persistence.
 
 ## Features
 
-- Browse, search, and filter movies by genre; view details and future showtimes.
+- Browse, search, and filter movies by genre; view release years, details, and future showtimes.
 - View seat availability, choose seats, check prices, and confirm bookings.
 - Retrieve a booking using its reference and booking email.
 - Staff sign-in and protected tools to manage movies, screenings, and bookings.

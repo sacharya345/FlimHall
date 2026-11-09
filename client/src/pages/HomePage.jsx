@@ -6,6 +6,7 @@ const emptyMovie = {
   description: '',
   genre: '',
   duration_min: '',
+  release_year: '',
   age_rating: '',
   poster_url: ''
 };
@@ -58,7 +59,7 @@ function MovieCard({ movie, onSelect }) {
           <h3>{movie.title}</h3>
           <span className="rating">{movie.age_rating}</span>
         </div>
-        <p>{movie.genre} <span aria-hidden="true">·</span> {movie.duration_min} min</p>
+        <p>{movie.release_year || 'Year unavailable'} <span aria-hidden="true">·</span> {movie.genre} <span aria-hidden="true">·</span> {movie.duration_min} min</p>
         <button className="text-button" onClick={() => onSelect(movie.id)}>
           Movie details and showtimes <span aria-hidden="true">→</span>
         </button>
@@ -401,7 +402,7 @@ export default function HomePage() {
                 <div>
                   <span className="section-kicker">MOVIE DETAILS</span>
                   <h2>{selectedMovie.title}</h2>
-                  <p>{selectedMovie.genre} <span aria-hidden="true">·</span> {selectedMovie.duration_min} min <span aria-hidden="true">·</span> {selectedMovie.age_rating}</p>
+                  <p>{selectedMovie.release_year || 'Year unavailable'} <span aria-hidden="true">·</span> {selectedMovie.genre} <span aria-hidden="true">·</span> {selectedMovie.duration_min} min <span aria-hidden="true">·</span> {selectedMovie.age_rating}</p>
                 </div>
                 <button className="icon-button" onClick={() => {
                   movieRequestId.current += 1;
@@ -537,6 +538,7 @@ export default function HomePage() {
                       <label>Genre<input required value={movieForm.genre} onChange={(event) => setMovieForm({ ...movieForm, genre: event.target.value })} /></label>
                       <label>Duration (min)<input required type="number" min="1" max="600" value={movieForm.duration_min} onChange={(event) => setMovieForm({ ...movieForm, duration_min: event.target.value })} /></label>
                     </div>
+                    <label>Release year<input required type="number" min="1888" max="2100" value={movieForm.release_year} onChange={(event) => setMovieForm({ ...movieForm, release_year: event.target.value })} /></label>
                     <div className="form-row">
                       <label>Age rating<input required placeholder="PG-13" value={movieForm.age_rating} onChange={(event) => setMovieForm({ ...movieForm, age_rating: event.target.value })} /></label>
                       <label>Poster URL<input type="url" placeholder="https://" value={movieForm.poster_url} onChange={(event) => setMovieForm({ ...movieForm, poster_url: event.target.value })} /></label>
@@ -547,7 +549,7 @@ export default function HomePage() {
                   <div className="admin-list">
                     {adminMovies.map((movie) => (
                       <div className="admin-list-row" key={movie.id}>
-                        <span><strong>{movie.title}</strong><small>{movie.genre} · {movie.duration_min} min</small></span>
+                        <span><strong>{movie.title}</strong><small>{movie.release_year || 'Year unavailable'} · {movie.genre} · {movie.duration_min} min</small></span>
                         <span className="row-actions">
                           <button className="text-button" onClick={() => { setEditingMovieId(movie.id); setMovieForm({ ...movie, duration_min: String(movie.duration_min), poster_url: movie.poster_url || '' }); }}>Edit</button>
                           <button className="text-button danger-text" onClick={() => removeMovie(movie.id)}>Delete</button>

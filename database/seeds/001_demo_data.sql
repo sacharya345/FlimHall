@@ -2,15 +2,15 @@ INSERT INTO auditoriums (name, seat_rows, seat_columns)
 VALUES ('Screen 1', 8, 10), ('Screen 2', 8, 10)
 ON CONFLICT (name) DO NOTHING;
 
-INSERT INTO movies (title, description, genre, duration_min, age_rating)
+INSERT INTO movies (title, description, genre, duration_min, age_rating, release_year)
 VALUES
-  ('The Last Horizon', 'A deep-space crew races to bring a lost station home before its orbit decays.', 'Sci-Fi', 128, 'PG-13'),
-  ('Midnight in Bloom', 'Two strangers find a new beginning during one unforgettable city night.', 'Romance', 104, 'PG-13'),
-  ('The Clockwork Case', 'A sharp detective follows a trail of impossible clues through a changing city.', 'Mystery', 116, 'PG-13'),
-  ('Wildwood', 'A family discovers that the forest beyond their town is full of unexpected magic.', 'Adventure', 110, 'PG'),
-  ('Laugh Track', 'An aspiring comic gets one week to turn a tiny club into a big break.', 'Comedy', 97, 'PG-13'),
-  ('Deep Blue', 'A marine biologist uncovers a mystery in the deepest part of the ocean.', 'Drama', 121, 'PG-13')
-ON CONFLICT (lower(title)) DO NOTHING;
+  ('The Last Horizon', 'A deep-space crew races to bring a lost station home before its orbit decays.', 'Sci-Fi', 128, 'PG-13', 2026),
+  ('Midnight in Bloom', 'Two strangers find a new beginning during one unforgettable city night.', 'Romance', 104, 'PG-13', 2025),
+  ('The Clockwork Case', 'A sharp detective follows a trail of impossible clues through a changing city.', 'Mystery', 116, 'PG-13', 2024),
+  ('Wildwood', 'A family discovers that the forest beyond their town is full of unexpected magic.', 'Adventure', 110, 'PG', 2023),
+  ('Laugh Track', 'An aspiring comic gets one week to turn a tiny club into a big break.', 'Comedy', 97, 'PG-13', 2022),
+  ('Deep Blue', 'A marine biologist uncovers a mystery in the deepest part of the ocean.', 'Drama', 121, 'PG-13', 2021)
+ON CONFLICT (lower(title)) DO UPDATE SET release_year = EXCLUDED.release_year;
 
 WITH slots(slot_index, show_time) AS (
   VALUES (0, TIME '12:00'), (1, TIME '16:00'), (2, TIME '20:00')

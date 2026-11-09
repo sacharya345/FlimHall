@@ -8,15 +8,17 @@ function validateMovie(input) {
     description: String(input.description || '').trim(),
     genre: String(input.genre || '').trim(),
     duration_min: Number(input.duration_min),
+    release_year: Number(input.release_year),
     age_rating: String(input.age_rating || '').trim(),
     poster_url: String(input.poster_url || '').trim() || null
   };
   if (!movie.title || movie.title.length > 180 || !movie.genre || movie.genre.length > 80
     || !Number.isInteger(movie.duration_min) || movie.duration_min < 1 || movie.duration_min > 600
+    || !Number.isInteger(movie.release_year) || movie.release_year < 1888 || movie.release_year > 2100
     || movie.description.length > 5000 || movie.age_rating.length > 20
     || (movie.poster_url && movie.poster_url.length > 2048)
     || (movie.poster_url && !/^https?:\/\//i.test(movie.poster_url))) {
-    throw httpError(400, 'Enter a title, genre, valid duration, and optional HTTP(S) poster URL.');
+    throw httpError(400, 'Enter a title, genre, valid duration and release year, and optional HTTP(S) poster URL.');
   }
   return movie;
 }
@@ -53,9 +55,9 @@ export async function listAdminMovies(req, res) {
 export async function createMovie(req, res) {
   const movie = validateMovie(req.body);
   const { rows } = await pool.query(
-    `INSERT INTO movies (title, description, genre, duration_min, age_rating, poster_url)
-     VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
-    [movie.title, movie.description, movie.genre, movie.duration_min, movie.age_rating, movie.poster_url]
+    `INSERT INTO movies (title, description, genre, duration_min, release_year, age_rating, poster_url)
+     VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
+    [movie.title, movie.description, movie.genre, movie.duration_min, movie.release_year, movie.age_rating, movie.poster_url]
   );
   res.status(201).json(rows[0]);
 }
@@ -64,9 +66,9 @@ export async function updateMovie(req, res) {
   const movie = validateMovie(req.body);
   const { rows } = await pool.query(
     `UPDATE movies SET title = $1, description = $2, genre = $3, duration_min = $4,
-       age_rating = $5, poster_url = $6, updated_at = now()
-     WHERE id = $7 RETURNING *`,
-    [movie.title, movie.description, movie.genre, movie.duration_min, movie.age_rating, movie.poster_url, parseId(req.params.id, 'Movie ID')]
+       release_year = $5, age_rating = $6, poster_url = $7, updated_at = now()
+     WHERE id = $8 RETURNING *`,
+    [movie.title, movie.description, movie.genre, movie.duration_min, movie.release_year, movie.age_rating, movie.poster_url, parseId(req.params.id, 'Movie ID')]
   );
   if (!rows[0]) throw httpError(404, 'Movie not found.');
   res.json(rows[0]);
