@@ -75,14 +75,11 @@ It is safe to run again; sample data is not duplicated.
 - Set `VITE_API_BASE_URL` in the client environment to use a different API URL.
 
 ## Project structure
-<<<<<<< HEAD
-=======
 - `client/` contains of the frontend application
 - `server/` contains of the API layer and business logic
 - `database/` contains schema and seed-related files
 - `docs/` contains project planning and requirements assets
->>>>>>> 7b8dc4b (commit)
-
+  
 - `client/` — React application
 - `server/` — Express API, authentication, and business logic
 - `database/` — PostgreSQL migration and demo seed
