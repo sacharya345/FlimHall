@@ -75,7 +75,7 @@ erDiagram
     SCREENINGS ||--o{ BOOKING_SEATS : allocates
 ```
 
-## 3. Database Relationships
+## 3. Database Relationship
 
 | Relationship | Type | Description |
 |---|---|---|
