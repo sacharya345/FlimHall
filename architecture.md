@@ -114,7 +114,7 @@ Responsibilities:
 - Maintain relationships between database tables.
 - Enforce database constraints.
 
-### 3.5 Backend Request Flows
+### 3.5 Backend Request Flow
 
 ```mermaid
 flowchart TD
