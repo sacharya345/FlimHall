@@ -1,7 +1,7 @@
 # Git and GitHub workflow
 
 Status: Proposal — the repository is connected to GitHub and currently on
-`main`; the team has not yet confirmed this workflow.
+`main`; the team has decided to create their individual branches.
 
 ## Branches
 
