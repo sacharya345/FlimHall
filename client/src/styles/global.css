@@ -1,7 +1,7 @@
 :root {
   font-family: 'Segoe UI', system-ui, sans-serif;
   color: #f5f3ef;
-  background: #080808;
+  background: #8b0000;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -16,7 +16,7 @@
 
 * { box-sizing: border-box; }
 html { min-width: 320px; scroll-behavior: smooth; }
-body { margin: 0; min-width: 320px; min-height: 100vh; background: #080808; }
+body { margin: 0; min-width: 320px; min-height: 100vh; background: #8b0000; }
 button, input, textarea, select { font: inherit; }
 button, a { -webkit-tap-highlight-color: transparent; }
 button { color: inherit; }
