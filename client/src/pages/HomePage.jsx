@@ -885,7 +885,7 @@ export default function HomePage() {
                           Doors {timeline.doorsOpenTime} · Ads {timeline.adsStartTime} (12m) · Film{' '}
                           {timeline.filmStartTime}
                         </small>
-                        <strong>${Number(screening.base_price).toFixed(2)}</strong>
+                        <strong>€{Number(screening.base_price).toFixed(2)}</strong>
                       </button>
                     );
                   })}
@@ -967,7 +967,7 @@ export default function HomePage() {
                         {selectedSeats.length} {selectedSeats.length === 1 ? 'ticket' : 'tickets'}
                       </span>
                       <strong>
-                        ${(selectedSeats.length * Number(seatData.screening.base_price)).toFixed(2)}
+                        €{(selectedSeats.length * Number(seatData.screening.base_price)).toFixed(2)}
                       </strong>
                     </div>
                     <div className="checkout-actions">
@@ -1002,7 +1002,7 @@ export default function HomePage() {
                       Reference: <strong>{bookingResult.booking.booking_ref}</strong>
                     </p>
                     <p>
-                      {bookingResult.booking.movie_title} · {bookingResult.booking.seats.join(', ')} · $
+                      {bookingResult.booking.movie_title} · {bookingResult.booking.seats.join(', ')} · €
                       {Number(bookingResult.booking.total_price).toFixed(2)}
                     </p>
                     <p className={bookingResult.emailStatus === 'sent' ? 'email-sent' : 'email-warning'}>
@@ -1119,7 +1119,7 @@ export default function HomePage() {
                 {formatDate(retrievedBooking.starts_at)} · {retrievedBooking.auditorium}
               </p>
               <p>
-                Seats: {retrievedBooking.seats.join(', ')} · Total: ${Number(retrievedBooking.total_price).toFixed(2)}
+                Seats: {retrievedBooking.seats.join(', ')} · Total: €{Number(retrievedBooking.total_price).toFixed(2)}
               </p>
               <p>
                 Reference: <strong>{retrievedBooking.booking_ref}</strong>
@@ -1345,7 +1345,7 @@ export default function HomePage() {
                         />
                       </label>
                       <label>
-                        Ticket price ($)
+                        Ticket price (€)
                         <input
                           required
                           type="number"
@@ -1430,7 +1430,7 @@ export default function HomePage() {
                                 {booking.customer_email} · {booking.movie_title} · {booking.seats.join(', ')}
                               </small>
                               <small>
-                                {formatDate(booking.starts_at)} · ${Number(booking.total_price).toFixed(2)} ·{' '}
+                                {formatDate(booking.starts_at)} · €{Number(booking.total_price).toFixed(2)} ·{' '}
                                 {booking.status}
                               </small>
                             </span>
