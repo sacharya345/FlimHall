@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import SeatMap from '../components/SeatMap';
+import { GENRE_LIST, MOVIES_CATALOG } from '../data/moviesCatalog';
 import { apiRequest } from '../services/api';
 import {
   buildAuditoriumRows,
@@ -7,68 +8,26 @@ import {
   getShowtimeSchedule
 } from '../utils/seatRules';
 
-const FALLBACK_MOVIES = [
-  {
-    id: 1,
-    title: 'The Last Horizon',
-    description: 'A deep-space crew races to bring a lost station home before its orbit decays.',
-    genre: 'Sci-Fi',
-    duration_min: 128,
-    release_year: 2026,
-    age_rating: 'PG-13',
-    poster_url: ''
-  },
-  {
-    id: 2,
-    title: 'Midnight in Bloom',
-    description: 'Two strangers find a new beginning during one unforgettable city night.',
-    genre: 'Romance',
-    duration_min: 104,
-    release_year: 2025,
-    age_rating: 'PG-13',
-    poster_url: ''
-  },
-  {
-    id: 3,
-    title: 'The Clockwork Case',
-    description: 'A sharp detective follows a trail of impossible clues through a changing city.',
-    genre: 'Mystery',
-    duration_min: 116,
-    release_year: 2024,
-    age_rating: 'PG-13',
-    poster_url: ''
-  },
-  {
-    id: 4,
-    title: 'Wildwood',
-    description: 'A family discovers that the forest beyond their town is full of unexpected magic.',
-    genre: 'Adventure',
-    duration_min: 110,
-    release_year: 2023,
-    age_rating: 'PG',
-    poster_url: ''
-  },
-  {
-    id: 5,
-    title: 'Laugh Track',
-    description: 'An aspiring comic gets one week to turn a tiny club into a big break.',
-    genre: 'Comedy',
-    duration_min: 97,
-    release_year: 2022,
-    age_rating: 'PG-13',
-    poster_url: ''
-  },
-  {
-    id: 6,
-    title: 'Deep Blue',
-    description: 'A marine biologist uncovers a mystery in the deepest part of the ocean.',
-    genre: 'Drama',
-    duration_min: 121,
-    release_year: 2021,
-    age_rating: 'PG-13',
-    poster_url: ''
-  }
-];
+const FALLBACK_MOVIES = MOVIES_CATALOG;
+
+function mergeAndFilterCatalog(apiMovies = [], searchQuery = '', genreFilter = '') {
+  const byTitle = new Map();
+  apiMovies.forEach((m) => {
+    byTitle.set(String(m.title).trim().toLowerCase(), m);
+  });
+  FALLBACK_MOVIES.forEach((m) => {
+    const key = String(m.title).trim().toLowerCase();
+    if (!byTitle.has(key)) {
+      byTitle.set(key, m);
+    }
+  });
+  const q = searchQuery.trim().toLowerCase();
+  return [...byTitle.values()].filter((m) => {
+    const matchesTitle = !q || m.title.toLowerCase().includes(q);
+    const matchesGenre = !genreFilter || m.genre.toLowerCase() === genreFilter.toLowerCase();
+    return matchesTitle && matchesGenre;
+  });
+}
 
 const emptyMovie = {
   title: '',
@@ -340,19 +299,13 @@ export default function HomePage() {
         apiRequest(`/movies${params.size ? `?${params}` : ''}`),
         apiRequest('/movies/genres')
       ]);
-      setMovies(movieList);
-      setGenres(genreList);
+      setMovies(mergeAndFilterCatalog(movieList, search, genre));
+      setGenres([...new Set([...GENRE_LIST, ...(genreList || [])])]);
       setUsingFallbackCatalog(false);
       setError('');
     } catch {
-      const q = search.trim().toLowerCase();
-      const filtered = FALLBACK_MOVIES.filter((m) => {
-        const matchesTitle = !q || m.title.toLowerCase().includes(q);
-        const matchesGenre = !genre || m.genre.toLowerCase() === genre.toLowerCase();
-        return matchesTitle && matchesGenre;
-      });
-      setMovies(filtered);
-      setGenres([...new Set(FALLBACK_MOVIES.map((m) => m.genre))]);
+      setMovies(mergeAndFilterCatalog([], search, genre));
+      setGenres(GENRE_LIST);
       setUsingFallbackCatalog(true);
     } finally {
       setLoadingMovies(false);
