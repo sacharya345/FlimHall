@@ -525,6 +525,17 @@ a { color: inherit; }
 .checkout-actions .button {
   flex: 1;
 }
+.dummy-payment-card {
+  grid-column: 1 / -1;
+  margin-top: 8px;
+  padding: 18px;
+  border: 1px solid var(--accent);
+  background: #14120e;
+}
+.dummy-payment-card h3 {
+  margin: 6px 0 0;
+  font-size: 18px;
+}
 @media (max-width: 600px) {
   .auditorium-row {
     grid-template-columns: 1fr;

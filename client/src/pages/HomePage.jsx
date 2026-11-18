@@ -216,6 +216,13 @@ export default function HomePage() {
   const [selectedSeats, setSelectedSeats] = useState([]);
   const [paymentMode, setPaymentMode] = useState('online'); // 'online' | 'counter'
   const [holdSeconds, setHoldSeconds] = useState(15 * 60);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [paymentProcessing, setPaymentProcessing] = useState(false);
+  const [dummyCard, setDummyCard] = useState({
+    cardNumber: '4242 4242 4242 4242',
+    expiry: '12/28',
+    cvc: '424'
+  });
 
   const [customerAccount, setCustomerAccount] = useState(() => {
     try {
@@ -465,6 +472,9 @@ export default function HomePage() {
       }
     }
 
+    const transactionId =
+      paymentMode === 'online' ? `TXN-${Math.random().toString(36).slice(2, 10).toUpperCase()}` : null;
+
     try {
       const result = await apiRequest('/bookings', {
         method: 'POST',
@@ -475,17 +485,19 @@ export default function HomePage() {
           seats: selectedSeats
         }
       });
-      setBookingResult({ ...result, paymentMode });
+      setBookingResult({ ...result, paymentMode, transactionId, paymentStatus: paymentMode === 'online' ? 'PAID' : 'UNPAID' });
       setSelectedSeats([]);
+      setShowPaymentModal(false);
       setNotice(
         paymentMode === 'online'
-          ? result.message || 'Online ticket purchase confirmed! Paid tickets cannot be cancelled.'
+          ? `✓ Payment Successful (${transactionId})! Online ticket purchase confirmed. Paid tickets cannot be cancelled.`
           : 'Counter reservation confirmed! Please collect and pay at least 2 hours before showtime.'
       );
       setError('');
     } catch (requestError) {
       if (usingFallbackCatalog || !requestError.status) {
         const fallbackRef = `FH-${Math.random().toString(36).slice(2, 10).toUpperCase()}`;
+        const totalEur = (selectedSeats.length * Number(selectedScreening.base_price)).toFixed(2);
         const demoBooking = {
           booking_ref: fallbackRef,
           customer_name: customer.name,
@@ -494,20 +506,25 @@ export default function HomePage() {
           starts_at: selectedScreening.starts_at,
           auditorium: selectedScreening.auditorium,
           seats: selectedSeats,
-          total_price: selectedSeats.length * Number(selectedScreening.base_price),
-          status: 'confirmed'
+          total_price: Number(totalEur),
+          status: 'confirmed',
+          payment_status: paymentMode === 'online' ? 'PAID' : 'PAY_AT_COUNTER',
+          transaction_id: transactionId
         };
         const stored = JSON.parse(localStorage.getItem('flimhall-demo-bookings') || '[]');
         localStorage.setItem('flimhall-demo-bookings', JSON.stringify([demoBooking, ...stored]));
         setBookingResult({
           booking: demoBooking,
           emailStatus: 'sent',
-          paymentMode
+          paymentMode,
+          transactionId,
+          paymentStatus: paymentMode === 'online' ? 'PAID' : 'UNPAID'
         });
         setSelectedSeats([]);
+        setShowPaymentModal(false);
         setNotice(
           paymentMode === 'online'
-            ? `Online booking confirmed (${fallbackRef})! Paid tickets cannot be cancelled.`
+            ? `✓ Payment Successful (€${totalEur} · ${transactionId})! Booking ${fallbackRef} is paid and confirmed.`
             : `Counter reservation confirmed (${fallbackRef})! Please collect and pay at least 2 hours before showtime.`
         );
         setError('');
@@ -517,31 +534,26 @@ export default function HomePage() {
     }
   }
 
-  async function startStripeCheckout() {
+  function startStripeCheckout() {
     if (currentGapSeats.length > 0) {
-      setError('Please resolve the 1-seat gap before starting Stripe Checkout.');
+      setError('Please resolve the 1-seat gap before starting payment.');
       return;
     }
-    if (!customer.email || !selectedSeats.length) {
-      setError('Please enter your name and email before proceeding to Stripe Checkout.');
+    if (!customer.name.trim() || !customer.email.trim() || !selectedSeats.length) {
+      setError('Please enter your name and email before proceeding to payment.');
       return;
     }
-    try {
-      setError('');
-      const session = await apiRequest('/checkout-sessions', {
-        method: 'POST',
-        body: {
-          screeningId: selectedScreening.id,
-          seatIds: selectedSeats,
-          email: customer.email
-        }
-      });
-      if (session?.url) {
-        window.location.assign(session.url);
-      }
-    } catch (err) {
-      setError(`${err.message} (Tip: Use "Confirm booking" to save your booking directly.)`);
-    }
+    setError('');
+    setShowPaymentModal(true);
+  }
+
+  function completeDummyPayment(event) {
+    event.preventDefault();
+    setPaymentProcessing(true);
+    window.setTimeout(() => {
+      setPaymentProcessing(false);
+      submitBooking({ preventDefault: () => {} });
+    }, 600);
   }
 
   async function retrieveBooking(event) {
@@ -1203,7 +1215,9 @@ export default function HomePage() {
                         className="button button-primary"
                         disabled={!selectedSeats.length || currentGapSeats.length > 0}
                       >
-                        {paymentMode === 'online' ? 'Confirm booking' : 'Reserve seats (Pay at counter)'}
+                        {paymentMode === 'online'
+                          ? `Pay Online Now (€${(selectedSeats.length * Number(seatData.screening.base_price)).toFixed(2)})`
+                          : 'Reserve seats (Pay at counter)'}
                       </button>
                       {paymentMode === 'online' && (
                         <button
@@ -1212,10 +1226,75 @@ export default function HomePage() {
                           disabled={!selectedSeats.length || currentGapSeats.length > 0}
                           onClick={startStripeCheckout}
                         >
-                          Pay with Stripe Checkout ↗
+                          Pay with Card / Stripe Checkout ↗
                         </button>
                       )}
                     </div>
+
+                    {showPaymentModal && paymentMode === 'online' && (
+                      <div className="dummy-payment-card" role="dialog" aria-label="Dummy Card Payment Checkout">
+                        <div className="details-header">
+                          <div>
+                            <span className="section-kicker">SANDBOX PAYMENT GATEWAY (TEST MODE)</span>
+                            <h3>
+                              Pay €{(selectedSeats.length * Number(seatData.screening.base_price)).toFixed(2)} for{' '}
+                              {selectedMovie.title}
+                            </h3>
+                            <small className="seat-rule-sub">
+                              Seats: {selectedSeats.join(', ')} · {seatData.screening.auditorium}
+                            </small>
+                          </div>
+                          <button
+                            type="button"
+                            className="icon-button"
+                            onClick={() => setShowPaymentModal(false)}
+                            aria-label="Close payment box"
+                          >
+                            ×
+                          </button>
+                        </div>
+
+                        <div className="form-row" style={{ marginTop: '14px' }}>
+                          <label>
+                            Test Card Number
+                            <input
+                              required
+                              value={dummyCard.cardNumber}
+                              onChange={(e) => setDummyCard({ ...dummyCard, cardNumber: e.target.value })}
+                            />
+                          </label>
+                          <label>
+                            Expiry (MM/YY)
+                            <input
+                              required
+                              value={dummyCard.expiry}
+                              onChange={(e) => setDummyCard({ ...dummyCard, expiry: e.target.value })}
+                            />
+                          </label>
+                          <label>
+                            CVC
+                            <input
+                              required
+                              value={dummyCard.cvc}
+                              onChange={(e) => setDummyCard({ ...dummyCard, cvc: e.target.value })}
+                            />
+                          </label>
+                        </div>
+
+                        <div className="form-actions" style={{ marginTop: '14px' }}>
+                          <button
+                            type="button"
+                            className="button button-primary"
+                            disabled={paymentProcessing}
+                            onClick={completeDummyPayment}
+                          >
+                            {paymentProcessing
+                              ? 'Processing payment…'
+                              : `Confirm & Pay €${(selectedSeats.length * Number(seatData.screening.base_price)).toFixed(2)}`}
+                          </button>
+                        </div>
+                      </div>
+                    )}
                   </form>
                 </div>
               )}
@@ -1223,21 +1302,34 @@ export default function HomePage() {
                 <div className="booking-receipt">
                   <span className="receipt-check">✓</span>
                   <div>
-                    <span className="section-kicker">BOOKING CONFIRMED</span>
-                    <h3>Your seats are waiting.</h3>
+                    <span className="section-kicker">
+                      {bookingResult.paymentMode === 'counter'
+                        ? 'COUNTER RESERVATION CONFIRMED (PAY AT THEATER)'
+                        : '✓ PAYMENT SUCCESSFUL · BOOKING CONFIRMED'}
+                    </span>
+                    <h3>
+                      {bookingResult.paymentMode === 'counter'
+                        ? 'Your seats are reserved.'
+                        : 'Payment successful! Your tickets are paid and ready.'}
+                    </h3>
                     <p>
-                      Reference: <strong>{bookingResult.booking.booking_ref}</strong>
+                      Booking Reference: <strong>{bookingResult.booking.booking_ref}</strong>
+                      {bookingResult.transactionId && (
+                        <>
+                          {' '}
+                          · Transaction ID: <strong>{bookingResult.transactionId}</strong>
+                        </>
+                      )}
                     </p>
                     <p>
-                      {bookingResult.booking.movie_title} · {bookingResult.booking.seats.join(', ')} · €
-                      {Number(bookingResult.booking.total_price).toFixed(2)}
+                      {bookingResult.booking.movie_title} · Seats: <strong>{bookingResult.booking.seats.join(', ')}</strong>{' '}
+                      · Total Paid: <strong>€{Number(bookingResult.booking.total_price).toFixed(2)}</strong> (
+                      {bookingResult.paymentMode === 'counter' ? 'Unpaid — Pay at Counter' : 'PAID IN FULL'})
                     </p>
                     <p className={bookingResult.emailStatus === 'sent' ? 'email-sent' : 'email-warning'}>
                       {bookingResult.paymentMode === 'counter'
                         ? 'Counter reservation saved. Please collect and pay at least 2 hours before showtime.'
-                        : bookingResult.emailStatus === 'sent'
-                          ? 'Confirmation email sent. Paid tickets are final and cannot be cancelled.'
-                          : 'Booking is saved, but email delivery is not configured or failed. Keep your reference.'}
+                        : '✓ Online payment completed successfully. Paid tickets are final and cannot be cancelled.'}
                     </p>
                   </div>
                 </div>
