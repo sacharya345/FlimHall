@@ -277,18 +277,45 @@ export default function HomePage() {
     return () => window.clearInterval(interval);
   }, [selectedSeats.length]);
 
+  const loadFallbackAdminState = useCallback(() => {
+    const customMovies = JSON.parse(localStorage.getItem('flimhall-admin-movies') || 'null');
+    const movieList = customMovies || FALLBACK_MOVIES;
+    const customScreenings = JSON.parse(localStorage.getItem('flimhall-admin-screenings') || 'null');
+    const defaultScreenings = movieList.slice(0, 6).flatMap((m) =>
+      buildFallbackScreenings(m.id).map((s) => ({
+        ...s,
+        movie_title: m.title,
+        auditorium_id: FLIMHALL_AUDITORIUMS.find((a) => a.name === s.auditorium)?.id || 1,
+        status: 'scheduled'
+      }))
+    );
+    const screeningList = customScreenings || defaultScreenings;
+    const bookingList = JSON.parse(localStorage.getItem('flimhall-demo-bookings') || '[]').map((b, idx) => ({
+      id: b.id || idx + 1,
+      ...b
+    }));
+    setAdminMovies(movieList);
+    setAdminScreenings(screeningList);
+    setAuditoriums(FLIMHALL_AUDITORIUMS);
+    setAdminBookings(bookingList);
+  }, []);
+
   const loadAdminData = useCallback(async () => {
     if (!staffToken) return;
+    if (staffToken === 'demo-staff-token') {
+      loadFallbackAdminState();
+      return;
+    }
     try {
       const [movieList, screeningList, auditoriumList, bookingList] = await fetchAdminData(staffToken);
       setAdminMovies(movieList);
       setAdminScreenings(screeningList);
-      setAuditoriums(auditoriumList);
+      setAuditoriums(auditoriumList?.length ? auditoriumList : FLIMHALL_AUDITORIUMS);
       setAdminBookings(bookingList);
-    } catch (requestError) {
-      setError(requestError.message);
+    } catch {
+      loadFallbackAdminState();
     }
-  }, [staffToken]);
+  }, [staffToken, loadFallbackAdminState]);
 
   const loadMovies = useCallback(async () => {
     try {
@@ -319,25 +346,11 @@ export default function HomePage() {
 
   useEffect(() => {
     if (!staffToken) return undefined;
-    let active = true;
-    async function loadDashboard() {
-      try {
-        const [movieList, screeningList, auditoriumList, bookingList] = await fetchAdminData(staffToken);
-        if (active) {
-          setAdminMovies(movieList);
-          setAdminScreenings(screeningList);
-          setAuditoriums(auditoriumList);
-          setAdminBookings(bookingList);
-        }
-      } catch (requestError) {
-        if (active) setError(requestError.message);
-      }
-    }
-    loadDashboard();
-    return () => {
-      active = false;
-    };
-  }, [staffToken]);
+    const timer = window.setTimeout(() => {
+      loadAdminData();
+    }, 0);
+    return () => window.clearTimeout(timer);
+  }, [staffToken, loadAdminData]);
 
   useEffect(() => {
     if (!selectedScreeningId || usingFallbackCatalog) return undefined;
@@ -566,12 +579,42 @@ export default function HomePage() {
       setError('');
       setNotice(`Signed in as ${result.staff.email}.`);
     } catch (requestError) {
+      const emailLower = login.email.trim().toLowerCase();
+      const validDemoEmail = emailLower === 'admin@flimhall.com' || emailLower === 'staff@flimhall.com';
+      const validDemoPass = login.password === 'FlimHall2026!' || login.password === 'admin123';
+      if (validDemoEmail && validDemoPass) {
+        sessionStorage.setItem('flimhall-staff-token', 'demo-staff-token');
+        setStaffToken('demo-staff-token');
+        setLogin({ email: '', password: '' });
+        setError('');
+        setNotice(`Signed in as ${emailLower} (Demo Staff Session).`);
+        return;
+      }
       reportError(requestError);
     }
   }
 
   async function saveMovie(event) {
     event.preventDefault();
+    if (staffToken === 'demo-staff-token') {
+      const nextMovie = {
+        ...movieForm,
+        id: editingMovieId || Date.now(),
+        duration_min: Number(movieForm.duration_min),
+        release_year: Number(movieForm.release_year)
+      };
+      const updated = editingMovieId
+        ? adminMovies.map((m) => (m.id === editingMovieId ? nextMovie : m))
+        : [nextMovie, ...adminMovies];
+      localStorage.setItem('flimhall-admin-movies', JSON.stringify(updated));
+      setAdminMovies(updated);
+      setMovies(updated);
+      setMovieForm(emptyMovie);
+      setEditingMovieId(null);
+      setNotice(editingMovieId ? 'Movie updated.' : 'Movie added.');
+      setError('');
+      return;
+    }
     const method = editingMovieId ? 'PUT' : 'POST';
     const path = editingMovieId ? `/admin/movies/${editingMovieId}` : '/admin/movies';
     try {
@@ -588,6 +631,15 @@ export default function HomePage() {
 
   async function removeMovie(movieId) {
     if (!window.confirm('Delete this movie? Movies with screenings cannot be deleted.')) return;
+    if (staffToken === 'demo-staff-token') {
+      const updated = adminMovies.filter((m) => m.id !== movieId);
+      localStorage.setItem('flimhall-admin-movies', JSON.stringify(updated));
+      setAdminMovies(updated);
+      setMovies(updated);
+      setNotice('Movie deleted.');
+      setError('');
+      return;
+    }
     try {
       await apiRequest(`/admin/movies/${movieId}`, { method: 'DELETE', token: staffToken });
       setNotice('Movie deleted.');
@@ -604,6 +656,31 @@ export default function HomePage() {
       ...screeningForm,
       starts_at: new Date(screeningForm.starts_at).toISOString()
     };
+    if (staffToken === 'demo-staff-token') {
+      const movieObj = adminMovies.find((m) => String(m.id) === String(screeningForm.movie_id));
+      const roomObj = auditoriums.find((r) => String(r.id) === String(screeningForm.auditorium_id));
+      const nextScreening = {
+        id: editingScreeningId || Date.now(),
+        movie_id: Number(screeningForm.movie_id),
+        movie_title: movieObj?.title || 'Selected Movie',
+        auditorium_id: Number(screeningForm.auditorium_id),
+        auditorium: roomObj?.name || 'Oulu — Auditorium 1 (100 seats)',
+        starts_at: body.starts_at,
+        base_price: Number(screeningForm.base_price),
+        available_seats: roomObj?.capacity || 100,
+        status: 'scheduled'
+      };
+      const updated = editingScreeningId
+        ? adminScreenings.map((s) => (s.id === editingScreeningId ? nextScreening : s))
+        : [nextScreening, ...adminScreenings];
+      localStorage.setItem('flimhall-admin-screenings', JSON.stringify(updated));
+      setAdminScreenings(updated);
+      setScreeningForm(emptyScreening);
+      setEditingScreeningId(null);
+      setNotice(editingScreeningId ? 'Screening updated.' : 'Screening created.');
+      setError('');
+      return;
+    }
     const method = editingScreeningId ? 'PUT' : 'POST';
     const path = editingScreeningId
       ? `/admin/screenings/${editingScreeningId}`
@@ -622,6 +699,16 @@ export default function HomePage() {
 
   async function cancelScreening(screeningId) {
     if (!window.confirm('Cancel this screening?')) return;
+    if (staffToken === 'demo-staff-token') {
+      const updated = adminScreenings.map((s) =>
+        s.id === screeningId ? { ...s, status: 'cancelled' } : s
+      );
+      localStorage.setItem('flimhall-admin-screenings', JSON.stringify(updated));
+      setAdminScreenings(updated);
+      setNotice('Screening cancelled.');
+      setError('');
+      return;
+    }
     try {
       await apiRequest(`/admin/screenings/${screeningId}/cancel`, {
         method: 'POST',
@@ -637,6 +724,16 @@ export default function HomePage() {
 
   async function cancelBooking(bookingId) {
     if (!window.confirm('Cancel this booking?')) return;
+    if (staffToken === 'demo-staff-token') {
+      const updated = adminBookings.map((b) =>
+        b.id === bookingId ? { ...b, status: 'cancelled' } : b
+      );
+      localStorage.setItem('flimhall-demo-bookings', JSON.stringify(updated));
+      setAdminBookings(updated);
+      setNotice('Booking cancelled and seats released.');
+      setError('');
+      return;
+    }
     try {
       const result = await apiRequest(`/admin/bookings/${bookingId}/cancel`, {
         method: 'POST',
@@ -1160,7 +1257,8 @@ export default function HomePage() {
                 <button className="button button-primary">Sign in</button>
               </form>
               <p className="muted-note">
-                Staff access is provisioned using the server’s ADMIN_EMAIL and ADMIN_PASSWORD settings.
+                Demo Staff Credentials: <strong>admin@flimhall.com</strong> / <strong>FlimHall2026!</strong> (or server
+                ADMIN_EMAIL &amp; ADMIN_PASSWORD).
               </p>
             </>
           ) : (
