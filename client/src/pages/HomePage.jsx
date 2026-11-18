@@ -238,6 +238,29 @@ export default function HomePage() {
   const [bookingLookup, setBookingLookup] = useState({ reference: '', email: '' });
   const [retrievedBooking, setRetrievedBooking] = useState(null);
   const [staffToken, setStaffToken] = useState(() => sessionStorage.getItem('flimhall-staff-token') || '');
+  const [staffProfile, setStaffProfile] = useState(() => {
+    try {
+      return JSON.parse(sessionStorage.getItem('flimhall-staff-profile') || 'null');
+    } catch {
+      return null;
+    }
+  });
+  const [staffAuthMode, setStaffAuthMode] = useState('signin'); // 'signin' | 'signup'
+  const [staffAccounts, setStaffAccounts] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem('flimhall-staff-accounts') || '[]');
+    } catch {
+      return [];
+    }
+  });
+  const [newStaffForm, setNewStaffForm] = useState({
+    ownerEmail: 'admin@flimhall.com',
+    ownerPassword: '',
+    staffName: '',
+    staffEmail: '',
+    staffPassword: '',
+    location: 'Oulu & Tampere'
+  });
   const [login, setLogin] = useState({ email: '', password: '' });
   const [adminMovies, setAdminMovies] = useState([]);
   const [adminScreenings, setAdminScreenings] = useState([]);
@@ -571,27 +594,132 @@ export default function HomePage() {
 
   async function staffLogin(event) {
     event.preventDefault();
+    const emailLower = login.email.trim().toLowerCase();
+
+    // 1. Check owner-created staff accounts stored in localStorage first
+    const matchedStaff = staffAccounts.find(
+      (acc) => acc.email.toLowerCase() === emailLower && acc.password === login.password
+    );
+    if (matchedStaff) {
+      const profile = {
+        email: matchedStaff.email,
+        name: matchedStaff.name,
+        role: 'staff',
+        location: matchedStaff.location
+      };
+      sessionStorage.setItem('flimhall-staff-token', 'demo-staff-token');
+      sessionStorage.setItem('flimhall-staff-profile', JSON.stringify(profile));
+      setStaffToken('demo-staff-token');
+      setStaffProfile(profile);
+      setLogin({ email: '', password: '' });
+      setError('');
+      setNotice(`Signed in as Staff Member: ${matchedStaff.name} (${matchedStaff.email}).`);
+      return;
+    }
+
+    // 2. Try backend /auth/login
     try {
       const result = await apiRequest('/auth/login', { method: 'POST', body: login });
+      const profile = {
+        email: result.staff.email,
+        name: result.staff.email === 'admin@flimhall.com' ? 'Main Admin Owner' : 'Theater Staff',
+        role: result.staff.role === 'admin' || result.staff.email === 'admin@flimhall.com' ? 'owner' : 'staff'
+      };
       sessionStorage.setItem('flimhall-staff-token', result.token);
+      sessionStorage.setItem('flimhall-staff-profile', JSON.stringify(profile));
       setStaffToken(result.token);
+      setStaffProfile(profile);
       setLogin({ email: '', password: '' });
       setError('');
       setNotice(`Signed in as ${result.staff.email}.`);
     } catch (requestError) {
-      const emailLower = login.email.trim().toLowerCase();
-      const validDemoEmail = emailLower === 'admin@flimhall.com' || emailLower === 'staff@flimhall.com';
+      const isMainOwner = emailLower === 'admin@flimhall.com';
+      const isDefaultStaff = emailLower === 'staff@flimhall.com';
       const validDemoPass = login.password === 'FlimHall2026!' || login.password === 'admin123';
-      if (validDemoEmail && validDemoPass) {
+      if ((isMainOwner || isDefaultStaff) && validDemoPass) {
+        const profile = {
+          email: emailLower,
+          name: isMainOwner ? 'Main Admin Owner' : 'Default Theater Staff',
+          role: isMainOwner ? 'owner' : 'staff'
+        };
         sessionStorage.setItem('flimhall-staff-token', 'demo-staff-token');
+        sessionStorage.setItem('flimhall-staff-profile', JSON.stringify(profile));
         setStaffToken('demo-staff-token');
+        setStaffProfile(profile);
         setLogin({ email: '', password: '' });
         setError('');
-        setNotice(`Signed in as ${emailLower} (Demo Staff Session).`);
+        setNotice(
+          isMainOwner
+            ? `Signed in as Main Admin Owner (${emailLower}). You can create and manage new staff accounts.`
+            : `Signed in as Theater Staff (${emailLower}).`
+        );
         return;
       }
       reportError(requestError);
     }
+  }
+
+  function createStaffAccount(event) {
+    event.preventDefault();
+    const isAlreadySignedInAsOwner = Boolean(staffToken && staffProfile?.role === 'owner');
+    if (!isAlreadySignedInAsOwner) {
+      const ownerEmailLower = newStaffForm.ownerEmail.trim().toLowerCase();
+      const validOwnerPass =
+        newStaffForm.ownerPassword === 'FlimHall2026!' || newStaffForm.ownerPassword === 'admin123';
+      if (ownerEmailLower !== 'admin@flimhall.com' || !validOwnerPass) {
+        setError(
+          'Only the Main Admin Owner (admin@flimhall.com / FlimHall2026!) can authorize creating a new staff account.'
+        );
+        return;
+      }
+    }
+
+    const targetEmail = newStaffForm.staffEmail.trim().toLowerCase();
+    if (
+      targetEmail === 'admin@flimhall.com' ||
+      staffAccounts.some((acc) => acc.email.toLowerCase() === targetEmail)
+    ) {
+      setError(`A staff account with email ${targetEmail} already exists.`);
+      return;
+    }
+
+    const created = {
+      id: Date.now(),
+      name: newStaffForm.staffName.trim() || 'FlimHall Staff',
+      email: targetEmail,
+      password: newStaffForm.staffPassword,
+      location: newStaffForm.location,
+      createdBy: 'admin@flimhall.com',
+      createdAt: new Date().toLocaleDateString()
+    };
+
+    const updatedList = [created, ...staffAccounts];
+    localStorage.setItem('flimhall-staff-accounts', JSON.stringify(updatedList));
+    setStaffAccounts(updatedList);
+    setNewStaffForm({
+      ownerEmail: 'admin@flimhall.com',
+      ownerPassword: '',
+      staffName: '',
+      staffEmail: '',
+      staffPassword: '',
+      location: 'Oulu & Tampere'
+    });
+    setError('');
+    setNotice(
+      `New staff account created for ${created.name} (${created.email})! They can now sign in with their email and password.`
+    );
+    if (!staffToken) {
+      setStaffAuthMode('signin');
+      setLogin({ email: created.email, password: '' });
+    }
+  }
+
+  function removeStaffAccount(emailToRemove) {
+    if (!window.confirm(`Remove staff account ${emailToRemove}?`)) return;
+    const updated = staffAccounts.filter((acc) => acc.email !== emailToRemove);
+    localStorage.setItem('flimhall-staff-accounts', JSON.stringify(updated));
+    setStaffAccounts(updated);
+    setNotice(`Removed staff account ${emailToRemove}.`);
   }
 
   async function saveMovie(event) {
@@ -749,7 +877,9 @@ export default function HomePage() {
 
   function signOut() {
     sessionStorage.removeItem('flimhall-staff-token');
+    sessionStorage.removeItem('flimhall-staff-profile');
     setStaffToken('');
+    setStaffProfile(null);
     setNotice('Staff session ended.');
   }
 
@@ -1230,42 +1360,142 @@ export default function HomePage() {
         <section className="workspace-section staff-workspace">
           {!staffToken ? (
             <>
-              <span className="section-kicker">STAFF ACCESS</span>
-              <h1>Welcome back.</h1>
-              <p className="workspace-intro">Sign in to manage movies, screenings, and customer bookings.</p>
-              <form className="stack-form retrieve-form" onSubmit={staffLogin}>
-                <label>
-                  Staff email
-                  <input
-                    required
-                    type="email"
-                    autoComplete="username"
-                    value={login.email}
-                    onChange={(event) => setLogin({ ...login, email: event.target.value })}
-                  />
-                </label>
-                <label>
-                  Password
-                  <input
-                    required
-                    type="password"
-                    autoComplete="current-password"
-                    value={login.password}
-                    onChange={(event) => setLogin({ ...login, password: event.target.value })}
-                  />
-                </label>
-                <button className="button button-primary">Sign in</button>
-              </form>
-              <p className="muted-note">
-                Demo Staff Credentials: <strong>admin@flimhall.com</strong> / <strong>FlimHall2026!</strong> (or server
-                ADMIN_EMAIL &amp; ADMIN_PASSWORD).
+              <span className="section-kicker">STAFF &amp; MAIN ADMIN OWNER ACCESS</span>
+              <h1>{staffAuthMode === 'signin' ? 'Welcome back.' : 'Create new staff account.'}</h1>
+              <p className="workspace-intro">
+                {staffAuthMode === 'signin'
+                  ? 'Sign in as the Main Admin Owner or Theater Staff to manage movies, screenings, and customer bookings.'
+                  : 'Main Admin Owner (admin@flimhall.com) can create new staff email and password credentials here.'}
               </p>
+
+              <div className="form-actions" style={{ marginBottom: '22px' }}>
+                <button
+                  type="button"
+                  className={staffAuthMode === 'signin' ? 'button button-primary' : 'button button-secondary'}
+                  onClick={() => setStaffAuthMode('signin')}
+                >
+                  Staff / Owner Sign In
+                </button>
+                <button
+                  type="button"
+                  className={staffAuthMode === 'signup' ? 'button button-primary' : 'button button-secondary'}
+                  onClick={() => setStaffAuthMode('signup')}
+                >
+                  Create New Staff Account (Owner Only)
+                </button>
+              </div>
+
+              {staffAuthMode === 'signin' ? (
+                <>
+                  <form className="stack-form retrieve-form" onSubmit={staffLogin}>
+                    <label>
+                      Staff or Owner email
+                      <input
+                        required
+                        type="email"
+                        autoComplete="username"
+                        value={login.email}
+                        onChange={(event) => setLogin({ ...login, email: event.target.value })}
+                      />
+                    </label>
+                    <label>
+                      Password
+                      <input
+                        required
+                        type="password"
+                        autoComplete="current-password"
+                        value={login.password}
+                        onChange={(event) => setLogin({ ...login, password: event.target.value })}
+                      />
+                    </label>
+                    <button className="button button-primary">Sign in</button>
+                  </form>
+                  <p className="muted-note">
+                    Main Admin Owner Credentials: <strong>admin@flimhall.com</strong> / <strong>FlimHall2026!</strong>
+                  </p>
+                </>
+              ) : (
+                <form className="stack-form retrieve-form" onSubmit={createStaffAccount}>
+                  <span className="section-kicker">1. MAIN ADMIN OWNER AUTHORIZATION</span>
+                  <label>
+                    Main Admin Owner email
+                    <input
+                      required
+                      type="email"
+                      value={newStaffForm.ownerEmail}
+                      onChange={(e) => setNewStaffForm({ ...newStaffForm, ownerEmail: e.target.value })}
+                    />
+                  </label>
+                  <label>
+                    Main Admin Owner password
+                    <input
+                      required
+                      type="password"
+                      placeholder="Enter FlimHall2026!"
+                      value={newStaffForm.ownerPassword}
+                      onChange={(e) => setNewStaffForm({ ...newStaffForm, ownerPassword: e.target.value })}
+                    />
+                  </label>
+
+                  <span className="section-kicker" style={{ marginTop: '10px' }}>
+                    2. NEW STAFF MEMBER CREDENTIALS
+                  </span>
+                  <label>
+                    New staff full name
+                    <input
+                      required
+                      placeholder="Mikko Virtanen"
+                      value={newStaffForm.staffName}
+                      onChange={(e) => setNewStaffForm({ ...newStaffForm, staffName: e.target.value })}
+                    />
+                  </label>
+                  <label>
+                    New staff email
+                    <input
+                      required
+                      type="email"
+                      placeholder="mikko@flimhall.com"
+                      value={newStaffForm.staffEmail}
+                      onChange={(e) => setNewStaffForm({ ...newStaffForm, staffEmail: e.target.value })}
+                    />
+                  </label>
+                  <label>
+                    New staff password
+                    <input
+                      required
+                      type="password"
+                      minLength="6"
+                      placeholder="At least 6 characters"
+                      value={newStaffForm.staffPassword}
+                      onChange={(e) => setNewStaffForm({ ...newStaffForm, staffPassword: e.target.value })}
+                    />
+                  </label>
+                  <label>
+                    Assigned theater location
+                    <select
+                      value={newStaffForm.location}
+                      onChange={(e) => setNewStaffForm({ ...newStaffForm, location: e.target.value })}
+                    >
+                      <option value="Oulu & Tampere">Oulu &amp; Tampere (All Locations)</option>
+                      <option value="FlimHall Oulu">FlimHall Oulu</option>
+                      <option value="FlimHall Tampere">FlimHall Tampere</option>
+                    </select>
+                  </label>
+                  <button className="button button-primary" type="submit">
+                    Create Staff Account
+                  </button>
+                </form>
+              )}
             </>
           ) : (
             <>
               <div className="staff-heading">
                 <div>
-                  <span className="section-kicker">THEATER MANAGEMENT</span>
+                  <span className="section-kicker">
+                    {staffProfile?.role === 'owner'
+                      ? `MAIN ADMIN OWNER (${staffProfile.email})`
+                      : `THEATER STAFF (${staffProfile?.email || 'Active Session'})`}
+                  </span>
                   <h1>Staff dashboard.</h1>
                 </div>
                 <button className="button button-secondary" onClick={signOut}>
@@ -1274,6 +1504,94 @@ export default function HomePage() {
               </div>
 
               <div className="admin-grid">
+                {staffProfile?.role === 'owner' && (
+                  <section className="admin-card bookings-card">
+                    <span className="section-kicker">MAIN ADMIN OWNER · STAFF TEAM MANAGEMENT</span>
+                    <h2>Create new staff login credentials</h2>
+                    <form className="stack-form" onSubmit={createStaffAccount}>
+                      <div className="form-row">
+                        <label>
+                          Staff full name
+                          <input
+                            required
+                            placeholder="Mikko Virtanen"
+                            value={newStaffForm.staffName}
+                            onChange={(e) => setNewStaffForm({ ...newStaffForm, staffName: e.target.value })}
+                          />
+                        </label>
+                        <label>
+                          New staff email
+                          <input
+                            required
+                            type="email"
+                            placeholder="mikko@flimhall.com"
+                            value={newStaffForm.staffEmail}
+                            onChange={(e) => setNewStaffForm({ ...newStaffForm, staffEmail: e.target.value })}
+                          />
+                        </label>
+                        <label>
+                          New staff password
+                          <input
+                            required
+                            type="password"
+                            minLength="6"
+                            placeholder="Create password"
+                            value={newStaffForm.staffPassword}
+                            onChange={(e) => setNewStaffForm({ ...newStaffForm, staffPassword: e.target.value })}
+                          />
+                        </label>
+                        <label>
+                          Location
+                          <select
+                            value={newStaffForm.location}
+                            onChange={(e) => setNewStaffForm({ ...newStaffForm, location: e.target.value })}
+                          >
+                            <option value="Oulu & Tampere">Oulu &amp; Tampere</option>
+                            <option value="FlimHall Oulu">FlimHall Oulu</option>
+                            <option value="FlimHall Tampere">FlimHall Tampere</option>
+                          </select>
+                        </label>
+                      </div>
+                      <div className="form-actions">
+                        <button className="button button-primary" type="submit">
+                          + Create Staff Account
+                        </button>
+                      </div>
+                    </form>
+
+                    <div className="admin-list">
+                      <div className="admin-list-row">
+                        <span>
+                          <strong>admin@flimhall.com · Main Admin Owner</strong>
+                          <small>Full Owner Access · Can create &amp; manage staff accounts</small>
+                        </span>
+                        <span className="rating">OWNER</span>
+                      </div>
+                      {staffAccounts.map((acc) => (
+                        <div className="admin-list-row" key={acc.id}>
+                          <span>
+                            <strong>
+                              {acc.name} · {acc.email}
+                            </strong>
+                            <small>
+                              Location: {acc.location} · Password: {acc.password} · Created {acc.createdAt}
+                            </small>
+                          </span>
+                          <span className="row-actions">
+                            <button
+                              type="button"
+                              className="text-button danger-text"
+                              onClick={() => removeStaffAccount(acc.email)}
+                            >
+                              Remove staff
+                            </button>
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </section>
+                )}
+
                 <section className="admin-card">
                   <span className="section-kicker">{editingMovieId ? 'EDIT MOVIE' : 'MOVIE CATALOGUE'}</span>
                   <h2>{editingMovieId ? 'Update movie' : 'Add a movie'}</h2>
