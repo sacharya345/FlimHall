@@ -1,4 +1,4 @@
-// FlimHall Movie Catalog — 10 Famous Movies in Each of the 6 Genres (60 Movies Total)
+﻿// FlimHall Movie Catalog â€” 10 Famous Movies in Each of the 6 Genres (60 Movies Total)
 // Genres: Sci-Fi, Romance, Mystery, Adventure, Comedy, Drama
 
 export const GENRE_LIST = ['Sci-Fi', 'Romance', 'Mystery', 'Adventure', 'Comedy', 'Drama'];
@@ -7,12 +7,12 @@ export const MOVIES_CATALOG = [
   {
     "id": 1,
     "title": "Interstellar",
-    "description": "A team of explorers travel through a wormhole in space in an attempt to ensure humanity’s survival.",
+    "description": "A team of explorers travel through a wormhole in space in an attempt to ensure humanityâ€™s survival.",
     "genre": "Sci-Fi",
     "duration_min": 169,
     "release_year": 2014,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BYzdjMDAxZGItMjI2My00ODA1LTlkNzItOWFjMDU5ZDJlYWY3XkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "poster_url": ""
   },
   {
     "id": 101,
@@ -22,7 +22,7 @@ export const MOVIES_CATALOG = [
     "duration_min": 148,
     "release_year": 2010,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_FMjpg_UX800_.jpg"
+    "poster_url": ""
   },
   {
     "id": 102,
@@ -32,7 +32,7 @@ export const MOVIES_CATALOG = [
     "duration_min": 166,
     "release_year": 2024,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BNTc0YmQxMjEtODI5MC00NjFiLTlkMWUtOGQ5NjFmYWUyZGJhXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "poster_url": ""
   },
   {
     "id": 103,
@@ -42,7 +42,7 @@ export const MOVIES_CATALOG = [
     "duration_min": 136,
     "release_year": 1999,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BN2NmN2VhMTQtMDNiOS00NDlhLTliMjgtODE2ZTY0ODQyNDRhXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "poster_url": ""
   },
   {
     "id": 104,
@@ -52,17 +52,17 @@ export const MOVIES_CATALOG = [
     "duration_min": 192,
     "release_year": 2022,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BNWI0Y2NkOWEtMmM2OC00MjQ3LWI1YzItZGQxYzQ3NzI4NWZmXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "poster_url": ""
   },
   {
     "id": 105,
     "title": "Blade Runner 2049",
-    "description": "Young Blade Runner K’s discovery of a long-buried secret leads him to track down former Blade Runner Rick Deckard.",
+    "description": "Young Blade Runner Kâ€™s discovery of a long-buried secret leads him to track down former Blade Runner Rick Deckard.",
     "genre": "Sci-Fi",
     "duration_min": 164,
     "release_year": 2017,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BNzA1Njg4NzYxOV5BMl5BanBnXkFtZTgwODk5NjU3MzI@._V1_FMjpg_UX800_.jpg"
+    "poster_url": ""
   },
   {
     "id": 106,
@@ -72,7 +72,7 @@ export const MOVIES_CATALOG = [
     "duration_min": 144,
     "release_year": 2015,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BMTc2MTQ3MDA1Nl5BMl5BanBnXkFtZTgwODA3OTI4NjE@._V1_FMjpg_UX800_.jpg"
+    "poster_url": ""
   },
   {
     "id": 107,
@@ -82,7 +82,7 @@ export const MOVIES_CATALOG = [
     "duration_min": 116,
     "release_year": 2016,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BMTExMzU0ODcxNDheQTJeQWpwZ15BbWU4MDE1OTI4MzAy._V1_FMjpg_UX800_.jpg"
+    "poster_url": ""
   },
   {
     "id": 108,
@@ -92,7 +92,7 @@ export const MOVIES_CATALOG = [
     "duration_min": 113,
     "release_year": 2014,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BMTc5OTk4MTM3M15BMl5BanBnXkFtZTgwODcxNjg3MDE@._V1_FMjpg_UX800_.jpg"
+    "poster_url": ""
   },
   {
     "id": 109,
@@ -102,7 +102,7 @@ export const MOVIES_CATALOG = [
     "duration_min": 121,
     "release_year": 2014,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BM2ZmNjQ2MzAtNDlhNi00MmQyLWJhZDMtNmJiMjFlOWY4MzcxXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "poster_url": ""
   },
   {
     "id": 2,
@@ -112,7 +112,7 @@ export const MOVIES_CATALOG = [
     "duration_min": 194,
     "release_year": 1997,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BYzYyN2FiZmUtYWYzMy00MzViLWJkZTMtOGY1ZjgzNWMwN2YxXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "poster_url": ""
   },
   {
     "id": 201,
@@ -122,7 +122,7 @@ export const MOVIES_CATALOG = [
     "duration_min": 128,
     "release_year": 2016,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BMDllYjliOTUtMDJjZC00ODIzLWJmNGMtOWI2NzQxMjA2NzdlXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "poster_url": ""
   },
   {
     "id": 202,
@@ -132,7 +132,7 @@ export const MOVIES_CATALOG = [
     "duration_min": 123,
     "release_year": 2004,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BZjE0ZjgzMzYtMTAxYi00NGMzLThmZDktNzFlMzA2MWRmYWQ0XkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "poster_url": ""
   },
   {
     "id": 203,
@@ -142,7 +142,7 @@ export const MOVIES_CATALOG = [
     "duration_min": 129,
     "release_year": 2005,
     "age_rating": "PG",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BMTA1NDQ3NTcyOTNeQTJeQWpwZ15BbWU3MDA0MzA4MzE@._V1_FMjpg_UX800_.jpg"
+    "poster_url": ""
   },
   {
     "id": 204,
@@ -152,7 +152,7 @@ export const MOVIES_CATALOG = [
     "duration_min": 136,
     "release_year": 2018,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BNGUxZTc0NTAtNzQwMy00MmM2LTgzMGYtZWIyY2E1MGFjYmM5XkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "poster_url": ""
   },
   {
     "id": 205,
@@ -162,7 +162,7 @@ export const MOVIES_CATALOG = [
     "duration_min": 123,
     "release_year": 2013,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BMTA1ODUzMDA3NzFeQTJeQWpwZ15BbWU3MDgxMTYxNTk@._V1_FMjpg_UX800_.jpg"
+    "poster_url": ""
   },
   {
     "id": 206,
@@ -172,7 +172,7 @@ export const MOVIES_CATALOG = [
     "duration_min": 110,
     "release_year": 2016,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BMTQ2NjE4NDE2NV5BMl5BanBnXkFtZTgwOTcwNDE5NzE@._V1_FMjpg_UX800_.jpg"
+    "poster_url": ""
   },
   {
     "id": 207,
@@ -182,7 +182,7 @@ export const MOVIES_CATALOG = [
     "duration_min": 120,
     "release_year": 2018,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BMTYxNDMyOTAxN15BMl5BanBnXkFtZTgwMDg1ODYzNTM@._V1_FMjpg_UX800_.jpg"
+    "poster_url": ""
   },
   {
     "id": 208,
@@ -192,7 +192,7 @@ export const MOVIES_CATALOG = [
     "duration_min": 126,
     "release_year": 2014,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BYTA4ODg5YWUtYmZiYy00Y2M4LWE0NjEtODE5MzhkYmJmZGEwXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "poster_url": ""
   },
   {
     "id": 209,
@@ -202,7 +202,7 @@ export const MOVIES_CATALOG = [
     "duration_min": 124,
     "release_year": 1999,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BZjY3YWI5OTMtYTdlNy00ZTZiLWEwYjItN2M1MGVkMDM4ZDExXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "poster_url": ""
   },
   {
     "id": 3,
@@ -212,7 +212,7 @@ export const MOVIES_CATALOG = [
     "duration_min": 138,
     "release_year": 2010,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BN2FjNWExYzEtY2YzOC00YjNlLTllMTQtNmIwM2Q1YzBhOWM1XkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "poster_url": ""
   },
   {
     "id": 301,
@@ -222,7 +222,7 @@ export const MOVIES_CATALOG = [
     "duration_min": 130,
     "release_year": 2019,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BZDU5ZTRkYmItZjg0Mi00ZTQwLThjMWItNWM3MTMxMzVjZmVjXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "poster_url": ""
   },
   {
     "id": 302,
@@ -232,17 +232,17 @@ export const MOVIES_CATALOG = [
     "duration_min": 128,
     "release_year": 2009,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BMTg0NjEwNjUxM15BMl5BanBnXkFtZTcwMzk0MjQ5Mg@@._V1_FMjpg_UX800_.jpg"
+    "poster_url": ""
   },
   {
     "id": 303,
     "title": "Gone Girl",
-    "description": "With his wife’s disappearance having become the focus of an intense media circus, a man sees the spotlight turned on him.",
+    "description": "With his wifeâ€™s disappearance having become the focus of an intense media circus, a man sees the spotlight turned on him.",
     "genre": "Mystery",
     "duration_min": 149,
     "release_year": 2014,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BMTk0MDQ3MzAzOV5BMl5BanBnXkFtZTgwNzU1NzE3MjE@._V1_FMjpg_UX800_.jpg"
+    "poster_url": ""
   },
   {
     "id": 304,
@@ -252,17 +252,17 @@ export const MOVIES_CATALOG = [
     "duration_min": 130,
     "release_year": 2006,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BZWU0NWZhYzMtZmNlYy00MjA1LTgyZWEtYmNjNzdjYmRkOTkzXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "poster_url": ""
   },
   {
     "id": 305,
     "title": "Murder on the Orient Express",
-    "description": "When a murder occurs on the train on which he’s travelling, celebrated detective Hercule Poirot is recruited to solve the case.",
+    "description": "When a murder occurs on the train on which heâ€™s travelling, celebrated detective Hercule Poirot is recruited to solve the case.",
     "genre": "Mystery",
     "duration_min": 114,
     "release_year": 2017,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BNTlkYjBlZTctZjg2YS00NDMzLTlkMTMtNWExMGYyOTliMmEzXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "poster_url": ""
   },
   {
     "id": 306,
@@ -272,17 +272,17 @@ export const MOVIES_CATALOG = [
     "duration_min": 149,
     "release_year": 2006,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BMjIxMjQyMTc3Nl5BMl5BanBnXkFtZTcwMTA1MDUzMw@@._V1_FMjpg_UX800_.jpg"
+    "poster_url": ""
   },
   {
     "id": 307,
     "title": "Prisoners",
-    "description": "When Keller Dover’s daughter and her friend go missing, he takes matters into his own hands as the police pursue multiple leads.",
+    "description": "When Keller Doverâ€™s daughter and her friend go missing, he takes matters into his own hands as the police pursue multiple leads.",
     "genre": "Mystery",
     "duration_min": 153,
     "release_year": 2013,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BMTg0NTIzMjQ1NV5BMl5BanBnXkFtZTcwNDc3MzM5OQ@@._V1_FMjpg_UX800_.jpg"
+    "poster_url": ""
   },
   {
     "id": 308,
@@ -292,7 +292,7 @@ export const MOVIES_CATALOG = [
     "duration_min": 139,
     "release_year": 2022,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BMzI2ZDYxZTEtMzVlOC00OTUyLTgyNTAtYWFhNmRhZjAzZWE1XkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "poster_url": ""
   },
   {
     "id": 309,
@@ -302,7 +302,7 @@ export const MOVIES_CATALOG = [
     "duration_min": 158,
     "release_year": 2011,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BMTczNDk4NTQ0OV5BMl5BanBnXkFtZTcwNDAxMDgxNw@@._V1_FMjpg_UX800_.jpg"
+    "poster_url": ""
   },
   {
     "id": 4,
@@ -312,27 +312,27 @@ export const MOVIES_CATALOG = [
     "duration_min": 127,
     "release_year": 1993,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BMjM2MDgxMDg0Nl5BMl5BanBnXkFtZTgwNTM2OTM5NDE@._V1_FMjpg_UX800_.jpg"
+    "poster_url": ""
   },
   {
     "id": 401,
     "title": "Pirates of the Caribbean: The Curse of the Black Pearl",
-    "description": "Blacksmith Will Turner teams up with eccentric pirate Captain Jack Sparrow to save his love from Jack’s former pirate allies.",
+    "description": "Blacksmith Will Turner teams up with eccentric pirate Captain Jack Sparrow to save his love from Jackâ€™s former pirate allies.",
     "genre": "Adventure",
     "duration_min": 143,
     "release_year": 2003,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BNDhlMzEyNzItMTA5Mi00YWRhLThlNTktYTQyMTA0MDIyNDEyXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "poster_url": ""
   },
   {
     "id": 402,
     "title": "Indiana Jones and the Last Crusade",
-    "description": "In 1938, after his father goes missing while pursuing the Holy Grail, Indiana Jones finds himself up against Adolf Hitler’semann.",
+    "description": "In 1938, after his father goes missing while pursuing the Holy Grail, Indiana Jones finds himself up against Adolf Hitlerâ€™semann.",
     "genre": "Adventure",
     "duration_min": 127,
     "release_year": 1989,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BNGIxNzQ0YzYtMjNmYi00YjBlLWFjNzEtNGE3ZGFmYTczM2MwXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "poster_url": ""
   },
   {
     "id": 403,
@@ -342,7 +342,7 @@ export const MOVIES_CATALOG = [
     "duration_min": 178,
     "release_year": 2001,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BNzIxMDQ2YTctNDY4MC00ZTRhLTk4ODQtMTVlOWY4NTdiYmMwXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "poster_url": ""
   },
   {
     "id": 404,
@@ -352,7 +352,7 @@ export const MOVIES_CATALOG = [
     "duration_min": 119,
     "release_year": 2017,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BZjI5MzdmODctYjA4NS00ZmMxLWJlOWUtOGVhMjA0OGMxMWYzXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "poster_url": ""
   },
   {
     "id": 405,
@@ -362,7 +362,7 @@ export const MOVIES_CATALOG = [
     "duration_min": 124,
     "release_year": 1999,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BMTY4YWE0OGMtNjU0Yi00YzIwLTk3NTktM2ZiYWQwNjM4MmMxXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "poster_url": ""
   },
   {
     "id": 406,
@@ -372,7 +372,7 @@ export const MOVIES_CATALOG = [
     "duration_min": 127,
     "release_year": 2012,
     "age_rating": "PG",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BNTg2OTY2ODg5OF5BMl5BanBnXkFtZTcwODM5MTYxOA@@._V1_FMjpg_UX800_.jpg"
+    "poster_url": ""
   },
   {
     "id": 407,
@@ -382,7 +382,7 @@ export const MOVIES_CATALOG = [
     "duration_min": 156,
     "release_year": 2015,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BYTgwNmQzZDctMjNmOS00OTExLTkwM2UtNzJmOTJhODFjOTdlXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "poster_url": ""
   },
   {
     "id": 408,
@@ -392,17 +392,17 @@ export const MOVIES_CATALOG = [
     "duration_min": 131,
     "release_year": 2004,
     "age_rating": "PG",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BMTY3NTc4OTYxMF5BMl5BanBnXkFtZTcwMjk5NzUyMw@@._V1_FMjpg_UX800_.jpg"
+    "poster_url": ""
   },
   {
     "id": 409,
     "title": "Jungle Cruise",
-    "description": "Based on Disneyland’s theme park ride where a small riverboat takes a group of travelers through a jungle filled with dangerous animals.",
+    "description": "Based on Disneylandâ€™s theme park ride where a small riverboat takes a group of travelers through a jungle filled with dangerous animals.",
     "genre": "Adventure",
     "duration_min": 127,
     "release_year": 2021,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BMWU5ZTBkMjQtMzg2Yi00ZmJlLTk4YWEtYTc0ZjU1YzE1NGNkXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "poster_url": ""
   },
   {
     "id": 5,
@@ -412,7 +412,7 @@ export const MOVIES_CATALOG = [
     "duration_min": 103,
     "release_year": 1990,
     "age_rating": "PG",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BNzNmNmQ2ZDEtMTc1MS00NjNiLThlMGUtZmQxNTg1Nzg5NWMzXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "poster_url": ""
   },
   {
     "id": 501,
@@ -422,7 +422,7 @@ export const MOVIES_CATALOG = [
     "duration_min": 100,
     "release_year": 2009,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BNDI2MzBhNzgtOWYyOS00NDM2LWE0OGYtOGQ0M2FjMTI2NTllXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "poster_url": ""
   },
   {
     "id": 502,
@@ -432,7 +432,7 @@ export const MOVIES_CATALOG = [
     "duration_min": 113,
     "release_year": 2007,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BNjk0MzdlZGEtNTRkOC00ZDRiLWJkYjAtMzUzYTRiNzk1YTViXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "poster_url": ""
   },
   {
     "id": 503,
@@ -442,7 +442,7 @@ export const MOVIES_CATALOG = [
     "duration_min": 99,
     "release_year": 2014,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BMzM5NjUxOTEyMl5BMl5BanBnXkFtZTgwNjEyMDM0MDE@._V1_FMjpg_UX800_.jpg"
+    "poster_url": ""
   },
   {
     "id": 504,
@@ -452,7 +452,7 @@ export const MOVIES_CATALOG = [
     "duration_min": 125,
     "release_year": 1993,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BY2E2MDc5ZGEtOTNlZS00Mjg4LThlNzUtMDY2Zjc4ZTViNWY0XkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "poster_url": ""
   },
   {
     "id": 505,
@@ -462,7 +462,7 @@ export const MOVIES_CATALOG = [
     "duration_min": 108,
     "release_year": 2006,
     "age_rating": "PG",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BNGMyYjYyZDAtNzRiZC00ZjRkLTkwYjktODkxODQzNTFiMTVmXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "poster_url": ""
   },
   {
     "id": 506,
@@ -472,17 +472,17 @@ export const MOVIES_CATALOG = [
     "duration_min": 109,
     "release_year": 2003,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BOTg2NDU4Mjg2NV5BMl5BanBnXkFtZTgwNjQ0MDIyMDI@._V1_FMjpg_UX800_.jpg"
+    "poster_url": ""
   },
   {
     "id": 507,
     "title": "The Intern",
-    "description": "Seventy-year-old widower Ben Whittaker has discovered that retirement isn’t all it’s cracked up to be and becomes a senior intern.",
+    "description": "Seventy-year-old widower Ben Whittaker has discovered that retirement isnâ€™t all itâ€™s cracked up to be and becomes a senior intern.",
     "genre": "Comedy",
     "duration_min": 121,
     "release_year": 2015,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BMTUyNjE5NjI5OF5BMl5BanBnXkFtZTgwNzYzMzU3NjE@._V1_FMjpg_UX800_.jpg"
+    "poster_url": ""
   },
   {
     "id": 508,
@@ -492,17 +492,17 @@ export const MOVIES_CATALOG = [
     "duration_min": 100,
     "release_year": 2018,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BMjI3ODkzNDk5MF5BMl5BanBnXkFtZTgwNTEyNjY2NDM@._V1_FMjpg_UX800_.jpg"
+    "poster_url": ""
   },
   {
     "id": 509,
     "title": "Free Guy",
-    "description": "When a bank teller discovers he’s actually a background player in an open-world video game, he decides to become the hero.",
+    "description": "When a bank teller discovers heâ€™s actually a background player in an open-world video game, he decides to become the hero.",
     "genre": "Comedy",
     "duration_min": 115,
     "release_year": 2021,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BN2I0MGMxYjUtZTZiMS00MzMxLTkzNWYtMDUyZmUwY2ViYTljXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "poster_url": ""
   },
   {
     "id": 6,
@@ -512,7 +512,7 @@ export const MOVIES_CATALOG = [
     "duration_min": 142,
     "release_year": 1994,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BMDAyY2FhYjctNDc5OS00MDNlLThiMGUtY2UxYWVkNGY2ZjljXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "poster_url": ""
   },
   {
     "id": 601,
@@ -522,7 +522,7 @@ export const MOVIES_CATALOG = [
     "duration_min": 180,
     "release_year": 2023,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BN2JkMDc5MGQtZjg3YS00NmFiLWIyZmQtZTJmNTM5MjVmYTQ4XkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "poster_url": ""
   },
   {
     "id": 602,
@@ -532,27 +532,27 @@ export const MOVIES_CATALOG = [
     "duration_min": 142,
     "release_year": 1994,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BNDYwNzVjMTItZmU5YS00YjQ5LTljYjgtMjY2NDVmYWMyNWFmXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "poster_url": ""
   },
   {
     "id": 603,
     "title": "The Pursuit of Happyness",
-    "description": "A struggling salesman takes custody of his son as he’s poised to begin a life-changing professional career.",
+    "description": "A struggling salesman takes custody of his son as heâ€™s poised to begin a life-changing professional career.",
     "genre": "Drama",
     "duration_min": 117,
     "release_year": 2006,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BMTQ5NjQ0NDI3NF5BMl5BanBnXkFtZTcwNDI0MjEzMw@@._V1_FMjpg_UX800_.jpg"
+    "poster_url": ""
   },
   {
     "id": 604,
     "title": "The Green Mile",
-    "description": "A tale set on death row where gentle giant John Coffey possesses the mysterious power to heal people’s ailments.",
+    "description": "A tale set on death row where gentle giant John Coffey possesses the mysterious power to heal peopleâ€™s ailments.",
     "genre": "Drama",
     "duration_min": 189,
     "release_year": 1999,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BMTUxMzQyNjA5MF5BMl5BanBnXkFtZTYwOTU2NTY3._V1_FMjpg_UX800_.jpg"
+    "poster_url": ""
   },
   {
     "id": 605,
@@ -562,7 +562,7 @@ export const MOVIES_CATALOG = [
     "duration_min": 135,
     "release_year": 2001,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BYjgzNjFkMmItOGJhNi00NWM3LWJlYTUtNDExMGQ3ZTI3NjJkXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "poster_url": ""
   },
   {
     "id": 606,
@@ -572,7 +572,7 @@ export const MOVIES_CATALOG = [
     "duration_min": 106,
     "release_year": 2014,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BMDFjOWFkYzktYzhhMC00NmYyLTkwY2EtYjViMDhmNzg0OGFkXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "poster_url": ""
   },
   {
     "id": 607,
@@ -582,7 +582,7 @@ export const MOVIES_CATALOG = [
     "duration_min": 126,
     "release_year": 1997,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BNDdjZGQ5YzEtNTc2My00Mjc0LWFlMTctYzkwMzZlNzdiZWYzXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "poster_url": ""
   },
   {
     "id": 608,
@@ -592,7 +592,7 @@ export const MOVIES_CATALOG = [
     "duration_min": 103,
     "release_year": 1998,
     "age_rating": "PG",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BNzA3ZjZlNzYtMTdjMy00NjMzLTk5ZGYtMTkyYzNiOGM1YmM3XkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "poster_url": ""
   },
   {
     "id": 609,
@@ -602,6 +602,7 @@ export const MOVIES_CATALOG = [
     "duration_min": 120,
     "release_year": 2010,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BMjlkNTE5ZTUtNGEwNy00MGVhLThmZjMtZjU1NDE5Zjk1NDZkXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "poster_url": ""
   }
 ];
+
