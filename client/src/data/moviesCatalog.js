@@ -1,4 +1,4 @@
-// FlimHall Movie Catalog — 10 Movies in Each of the 6 Genres (60 Movies Total)
+// FlimHall Movie Catalog — 10 Famous Movies in Each of the 6 Genres (60 Movies Total)
 // Genres: Sci-Fi, Romance, Mystery, Adventure, Comedy, Drama
 
 export const GENRE_LIST = ['Sci-Fi', 'Romance', 'Mystery', 'Adventure', 'Comedy', 'Drama'];
@@ -6,602 +6,602 @@ export const GENRE_LIST = ['Sci-Fi', 'Romance', 'Mystery', 'Adventure', 'Comedy'
 export const MOVIES_CATALOG = [
   {
     "id": 1,
-    "title": "The Last Horizon",
-    "description": "A deep-space crew races to bring a lost station home before its orbit decays.",
+    "title": "Interstellar",
+    "description": "A team of explorers travel through a wormhole in space in an attempt to ensure humanity’s survival.",
     "genre": "Sci-Fi",
-    "duration_min": 128,
-    "release_year": 2026,
+    "duration_min": 169,
+    "release_year": 2014,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BNjVlNWE1MzktOWY4Ni00NjRhLTgyM2MtNDBhNTZjODczM2VhXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "poster_url": "https://m.media-amazon.com/images/M/MV5BYzdjMDAxZGItMjI2My00ODA1LTlkNzItOWFjMDU5ZDJlYWY3XkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
   },
   {
     "id": 101,
-    "title": "Neon Protocol",
-    "description": "In a rain-drenched cybernetic metropolis, an AI ethics investigator uncovers a rogue memory network.",
+    "title": "Inception",
+    "description": "A thief who steals corporate secrets through dream-sharing technology is given the task of planting an idea.",
     "genre": "Sci-Fi",
-    "duration_min": 134,
-    "release_year": 2026,
+    "duration_min": 148,
+    "release_year": 2010,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BMTJhODFjOWQtMWFjNS00MTMxLWI3NTQtM2E4YzdmYjAwYzIwXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "poster_url": "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_FMjpg_UX800_.jpg"
   },
   {
     "id": 102,
-    "title": "Echoes of Titan",
-    "description": "First-wave colonists on Saturn’s largest moon detect a rhythmic signal beneath the methane lakes.",
+    "title": "Dune: Part Two",
+    "description": "Paul Atreides unites with Chani and the Fremen while on a warpath of revenge against the conspirators.",
     "genre": "Sci-Fi",
-    "duration_min": 142,
-    "release_year": 2025,
+    "duration_min": 166,
+    "release_year": 2024,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BZTQwZDk0NmMtYTFkNi00OTQ3LWIzODgtZmE4MjYwMjYxNjBjXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "poster_url": "https://m.media-amazon.com/images/M/MV5BNTc0YmQxMjEtODI5MC00NjFiLTlkMWUtOGQ5NjFmYWUyZGJhXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
   },
   {
     "id": 103,
-    "title": "Solaris Drift",
-    "description": "A solar-sail cargo pilot must navigate a coronal mass ejection to deliver medical supplies to Mars.",
+    "title": "The Matrix",
+    "description": "A computer hacker learns from mysterious rebels about the true nature of his reality and his role in the war.",
     "genre": "Sci-Fi",
-    "duration_min": 118,
-    "release_year": 2025,
-    "age_rating": "PG",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BMTc2MTQ3MDA1Nl5BMl5BanBnXkFtZTgwODA3OTI4NjE@._V1_FMjpg_UX800_.jpg"
+    "duration_min": 136,
+    "release_year": 1999,
+    "age_rating": "PG-13",
+    "poster_url": "https://m.media-amazon.com/images/M/MV5BN2NmN2VhMTQtMDNiOS00NDlhLTliMjgtODE2ZTY0ODQyNDRhXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
   },
   {
     "id": 104,
-    "title": "Chronos Gate",
-    "description": "Physicists testing a quantum relay accidentally open a four-hour window into next week.",
+    "title": "Avatar: The Way of Water",
+    "description": "Jake Sully lives with his newfound family formed on the extrasolar moon Pandora and protects them from a familiar threat.",
     "genre": "Sci-Fi",
-    "duration_min": 125,
-    "release_year": 2024,
+    "duration_min": 192,
+    "release_year": 2022,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BNGYxOGJkMjItZjVkZC00OGEzLWExNjktOTZmNGZhZmRlMTk2XkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "poster_url": "https://m.media-amazon.com/images/M/MV5BNWI0Y2NkOWEtMmM2OC00MjQ3LWI1YzItZGQxYzQ3NzI4NWZmXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
   },
   {
     "id": 105,
-    "title": "Orbital Zero",
-    "description": "Cut off from mission control, three astronauts aboard a lunar shipyard must rebuild their life support.",
+    "title": "Blade Runner 2049",
+    "description": "Young Blade Runner K’s discovery of a long-buried secret leads him to track down former Blade Runner Rick Deckard.",
     "genre": "Sci-Fi",
-    "duration_min": 115,
-    "release_year": 2024,
+    "duration_min": 164,
+    "release_year": 2017,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BZWFkMDA2ZWEtOGEzNi00NTE1LTkyNGEtNGI0YzI5MWJlZGViXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "poster_url": "https://m.media-amazon.com/images/M/MV5BNzA1Njg4NzYxOV5BMl5BanBnXkFtZTgwODk5NjU3MzI@._V1_FMjpg_UX800_.jpg"
   },
   {
     "id": 106,
-    "title": "Synthetic Dawn",
-    "description": "An android botanist tending the last greenhouse in the Arctic circle begins dreaming of spring.",
+    "title": "The Martian",
+    "description": "An astronaut becomes stranded on Mars after his team assumes him dead, and must rely on his ingenuity to survive.",
     "genre": "Sci-Fi",
-    "duration_min": 112,
-    "release_year": 2023,
-    "age_rating": "PG",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BNGM3MTMwOTctZjU0Yi00N2RjLTlhNzEtMDhmMWVmODNhYzFmXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "duration_min": 144,
+    "release_year": 2015,
+    "age_rating": "PG-13",
+    "poster_url": "https://m.media-amazon.com/images/M/MV5BMTc2MTQ3MDA1Nl5BMl5BanBnXkFtZTgwODA3OTI4NjE@._V1_FMjpg_UX800_.jpg"
   },
   {
     "id": 107,
-    "title": "Starlight Nomad",
-    "description": "A generation ship crossing the Perseus Arm faces a generational vote on whether to settle an ocean world.",
+    "title": "Arrival",
+    "description": "A linguist works with the military to communicate with alien lifeforms after twelve mysterious spacecraft appear.",
     "genre": "Sci-Fi",
-    "duration_min": 139,
-    "release_year": 2023,
+    "duration_min": 116,
+    "release_year": 2016,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BZmYzMzdmNGItOWY4Yy00YjI2LWExNjctN2YyNWNjNmM2MGM2XkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "poster_url": "https://m.media-amazon.com/images/M/MV5BMTExMzU0ODcxNDheQTJeQWpwZ15BbWU4MDE1OTI4MzAy._V1_FMjpg_UX800_.jpg"
   },
   {
     "id": 108,
-    "title": "The Kepler Signal",
-    "description": "Radio astronomers in northern Finland decode an mathematical blueprint broadcast from Kepler-186f.",
+    "title": "Edge of Tomorrow",
+    "description": "A soldier fighting aliens gets to relive the same day over and over again, the day restarting every time he dies.",
     "genre": "Sci-Fi",
-    "duration_min": 129,
-    "release_year": 2022,
+    "duration_min": 113,
+    "release_year": 2014,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BM2JiYmE1Y2UtNDQ3YS00YTZhLTk5MzAtYzEzMzIyNTM4OTRlXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "poster_url": "https://m.media-amazon.com/images/M/MV5BMTc5OTk4MTM3M15BMl5BanBnXkFtZTgwODcxNjg3MDE@._V1_FMjpg_UX800_.jpg"
   },
   {
     "id": 109,
-    "title": "Gravity Well",
-    "description": "A salvage tug captain risks everything to tow a derelict research vessel away from a singularity.",
+    "title": "Guardians of the Galaxy",
+    "description": "A group of intergalactic criminals must pull together to stop a fanatical warrior with plans to purge the universe.",
     "genre": "Sci-Fi",
-    "duration_min": 122,
-    "release_year": 2021,
+    "duration_min": 121,
+    "release_year": 2014,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BMTY3MGExNzctMjc1Mi00NmZmLWJlYzItZGUzMzFiZjc1N2VkXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "poster_url": "https://m.media-amazon.com/images/M/MV5BM2ZmNjQ2MzAtNDlhNi00MmQyLWJhZDMtNmJiMjFlOWY4MzcxXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
   },
   {
     "id": 2,
-    "title": "Midnight in Bloom",
-    "description": "Two strangers find a new beginning during one unforgettable city night.",
+    "title": "Titanic",
+    "description": "A seventeen-year-old aristocrat falls in love with a kind but poor artist aboard the luxurious, ill-fated R.M.S. Titanic.",
     "genre": "Romance",
-    "duration_min": 104,
-    "release_year": 2025,
+    "duration_min": 194,
+    "release_year": 1997,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BNWI4M2Q0NzAtNGQ2ZC00NjM2LWJhZDUtMTI2MGZkMjFmZDYxXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "poster_url": "https://m.media-amazon.com/images/M/MV5BYzYyN2FiZmUtYWYzMy00MzViLWJkZTMtOGY1ZjgzNWMwN2YxXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
   },
   {
     "id": 201,
-    "title": "Letters from Helsinki",
-    "description": "An architect and a cellist exchange handwritten notes left inside a vintage library book.",
+    "title": "La La Land",
+    "description": "While navigating their careers in Los Angeles, a pianist and an actress fall in love while attempting to reconcile their aspirations.",
     "genre": "Romance",
-    "duration_min": 109,
-    "release_year": 2026,
-    "age_rating": "PG",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BZjE0ZjgzMzYtMTAxYi00NGMzLThmZDktNzFlMzA2MWRmYWQ0XkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "duration_min": 128,
+    "release_year": 2016,
+    "age_rating": "PG-13",
+    "poster_url": "https://m.media-amazon.com/images/M/MV5BMDllYjliOTUtMDJjZC00ODIzLWJmNGMtOWI2NzQxMjA2NzdlXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
   },
   {
     "id": 202,
-    "title": "Autumn by the Bay",
-    "description": "Returning home to restore a coastal lighthouse, a painter reconnects with her childhood rival.",
+    "title": "The Notebook",
+    "description": "A poor yet passionate young man falls in love with a rich young woman, giving her a sense of freedom.",
     "genre": "Romance",
-    "duration_min": 106,
-    "release_year": 2025,
-    "age_rating": "PG",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BZjQ0YmU0ZjQtZmIxNC00MmZkLWJhZDMtNWZmZDdkOWVjYjM3XkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "duration_min": 123,
+    "release_year": 2004,
+    "age_rating": "PG-13",
+    "poster_url": "https://m.media-amazon.com/images/M/MV5BZjE0ZjgzMzYtMTAxYi00NGMzLThmZDktNzFlMzA2MWRmYWQ0XkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
   },
   {
     "id": 203,
-    "title": "Cafe Aurora",
-    "description": "Two night-shift bakers in Oulu compete for the same corner storefront while falling for each other.",
+    "title": "Pride & Prejudice",
+    "description": "Sparks fly when spirited Elizabeth Bennet meets single, rich, and proud Mr. Darcy in nineteenth-century England.",
     "genre": "Romance",
-    "duration_min": 99,
-    "release_year": 2025,
+    "duration_min": 129,
+    "release_year": 2005,
     "age_rating": "PG",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BYmE2YjI0NWEtMTlkZi00OTQwLTlmNzMtYmNiZGE5Zjg1NzZhXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "poster_url": "https://m.media-amazon.com/images/M/MV5BMTA1NDQ3NTcyOTNeQTJeQWpwZ15BbWU3MDA0MzA4MzE@._V1_FMjpg_UX800_.jpg"
   },
   {
     "id": 204,
-    "title": "The Last Train to Tampere",
-    "description": "When a snowstorm delays the night express, two commuters share headphones and life plans.",
+    "title": "A Star Is Born",
+    "description": "A musician helps a young singer find fame as age and alcoholism send his own career into a downward spiral.",
     "genre": "Romance",
-    "duration_min": 102,
-    "release_year": 2024,
+    "duration_min": 136,
+    "release_year": 2018,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BMTdlNDFhNGYtYTkyNy00ZWZlLWE4OTktOTZkYmJiOWI4NzFlXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "poster_url": "https://m.media-amazon.com/images/M/MV5BNGUxZTc0NTAtNzQwMy00MmM2LTgzMGYtZWIyY2E1MGFjYmM5XkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
   },
   {
     "id": 205,
-    "title": "Paper Lanterns",
-    "description": "A wedding photographer and a florist team up to save a rained-out midsummer festival.",
+    "title": "About Time",
+    "description": "At the age of 21, Tim discovers he can travel in time and change what happens and has happened in his own life.",
     "genre": "Romance",
-    "duration_min": 108,
-    "release_year": 2024,
-    "age_rating": "PG",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BMjdkNDI3ZWQtY2JjNC00NTFhLWEwMmQtNGM4ZjYyOWRjMjA5XkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "duration_min": 123,
+    "release_year": 2013,
+    "age_rating": "PG-13",
+    "poster_url": "https://m.media-amazon.com/images/M/MV5BMTA1ODUzMDA3NzFeQTJeQWpwZ15BbWU3MDgxMTYxNTk@._V1_FMjpg_UX800_.jpg"
   },
   {
     "id": 206,
-    "title": "Second Encore",
-    "description": "Former duet partners reunite ten years later for a one-night charity concert.",
+    "title": "Me Before You",
+    "description": "A girl in a small town forms an unlikely bond with a recently-paralyzed man she is taking care of.",
     "genre": "Romance",
-    "duration_min": 114,
-    "release_year": 2023,
+    "duration_min": 110,
+    "release_year": 2016,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BYmE5ZDhiMjAtZjFkNC00YjFmLWIzZjMtYmRjMjYxYzVlZGY1XkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "poster_url": "https://m.media-amazon.com/images/M/MV5BMTQ2NjE4NDE2NV5BMl5BanBnXkFtZTgwOTcwNDE5NzE@._V1_FMjpg_UX800_.jpg"
   },
   {
     "id": 207,
-    "title": "Summer on the Archipelago",
-    "description": "A marine tour guide and a visiting botanist spend three sun-filled weeks mapping island wildflowers.",
+    "title": "Crazy Rich Asians",
+    "description": "This contemporary romantic comedy based on a global bestseller follows native New Yorker Rachel Chu to Singapore.",
     "genre": "Romance",
-    "duration_min": 105,
-    "release_year": 2023,
-    "age_rating": "PG",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BMjIzYWRmNTgtNjY2MC00M2JkLWFmNGMtNjVmYzczZDZjODk2XkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "duration_min": 120,
+    "release_year": 2018,
+    "age_rating": "PG-13",
+    "poster_url": "https://m.media-amazon.com/images/M/MV5BMTYxNDMyOTAxN15BMl5BanBnXkFtZTgwMDg1ODYzNTM@._V1_FMjpg_UX800_.jpg"
   },
   {
     "id": 208,
-    "title": "Velvet Sky",
-    "description": "Two amateur stargazers meet every Friday on a rooftop observatory waiting for the northern lights.",
+    "title": "The Fault in Our Stars",
+    "description": "Two teenage cancer patients begin a life-affirming journey to visit a reclusive author in Amsterdam.",
     "genre": "Romance",
-    "duration_min": 101,
-    "release_year": 2022,
-    "age_rating": "PG",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BNjZmNzRkYmMtZTdiNS00MGIyLWFhYmQtNTJiOTRmZDEwMDhkXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "duration_min": 126,
+    "release_year": 2014,
+    "age_rating": "PG-13",
+    "poster_url": "https://m.media-amazon.com/images/M/MV5BYTA4ODg5YWUtYmZiYy00Y2M4LWE0NjEtODE5MzhkYmJmZGEwXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
   },
   {
     "id": 209,
-    "title": "When the Snow Melts",
-    "description": "A bookshop owner and a travel writer make a pact to test each other’s bucket lists before spring.",
+    "title": "Notting Hill",
+    "description": "The life of a simple bookshop owner changes when he meets the most famous film star in the world.",
     "genre": "Romance",
-    "duration_min": 111,
-    "release_year": 2021,
+    "duration_min": 124,
+    "release_year": 1999,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BY2QyYTM4ZDAtNTNkZS00ZDZhLTlmZGMtNmU4NmY3Y2ViMDgwXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "poster_url": "https://m.media-amazon.com/images/M/MV5BZjY3YWI5OTMtYTdlNy00ZTZiLWEwYjItN2M1MGVkMDM4ZDExXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
   },
   {
     "id": 3,
-    "title": "The Clockwork Case",
-    "description": "A sharp detective follows a trail of impossible clues through a changing city.",
+    "title": "Shutter Island",
+    "description": "Teddy Daniels and Chuck Aule, two US marshals, are sent to an asylum on a remote island to investigate a disappearance.",
     "genre": "Mystery",
-    "duration_min": 116,
-    "release_year": 2024,
+    "duration_min": 138,
+    "release_year": 2010,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BZTZlYjZiODgtZDQ1ZS00ZWRhLWJmMTktNDU1NzUzODI2MWE5XkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "poster_url": "https://m.media-amazon.com/images/M/MV5BN2FjNWExYzEtY2YzOC00YjNlLTllMTQtNmIwM2Q1YzBhOWM1XkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
   },
   {
     "id": 301,
-    "title": "Glass Harbor",
-    "description": "When a historic sailing ship appears in harbor with no crew aboard, a port inspector investigates.",
+    "title": "Knives Out",
+    "description": "A detective investigates the death of a patriarch of an eccentric, combative family.",
     "genre": "Mystery",
-    "duration_min": 123,
-    "release_year": 2026,
+    "duration_min": 130,
+    "release_year": 2019,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BOTE2MjI4MGYtNGNmNS00NzFlLThlYTEtZDY4ZmUwNTM5MzEzXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "poster_url": "https://m.media-amazon.com/images/M/MV5BZDU5ZTRkYmItZjg0Mi00ZTQwLThjMWItNWM3MTMxMzVjZmVjXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
   },
   {
     "id": 302,
-    "title": "The Thirteenth Portrait",
-    "description": "An art restorer discovers a hidden map painted beneath a century-old manor portrait.",
+    "title": "Sherlock Holmes",
+    "description": "Detective Sherlock Holmes and his stalwart partner Watson engage in a battle of wits and brawn with a nemesis.",
     "genre": "Mystery",
-    "duration_min": 119,
-    "release_year": 2025,
+    "duration_min": 128,
+    "release_year": 2009,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BMDM3Yjk2OWYtNGE2Yy00ZGM3LTgwODgtNjcxNjIyYTMwM2U3XkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "poster_url": "https://m.media-amazon.com/images/M/MV5BMTg0NjEwNjUxM15BMl5BanBnXkFtZTcwMzk0MjQ5Mg@@._V1_FMjpg_UX800_.jpg"
   },
   {
     "id": 303,
-    "title": "Cipher in the Snow",
-    "description": "A cryptographer is called to a remote Lapland weather station after the crew vanishes mid-transmission.",
+    "title": "Gone Girl",
+    "description": "With his wife’s disappearance having become the focus of an intense media circus, a man sees the spotlight turned on him.",
     "genre": "Mystery",
-    "duration_min": 127,
-    "release_year": 2025,
+    "duration_min": 149,
+    "release_year": 2014,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BMDQ5MDQ3NTktMGJkNC00NGIyLWExMGUtOWYxZGZhMzMzNzFhXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "poster_url": "https://m.media-amazon.com/images/M/MV5BMTk0MDQ3MzAzOV5BMl5BanBnXkFtZTgwNzU1NzE3MjE@._V1_FMjpg_UX800_.jpg"
   },
   {
     "id": 304,
-    "title": "The Silent Conservatory",
-    "description": "A priceless Stradivarius violin disappears from a locked concert hall during intermission.",
+    "title": "The Prestige",
+    "description": "After a tragic accident, two stage magicians in 1890s London engage in a battle to create the ultimate illusion.",
     "genre": "Mystery",
-    "duration_min": 113,
-    "release_year": 2024,
-    "age_rating": "PG",
+    "duration_min": 130,
+    "release_year": 2006,
+    "age_rating": "PG-13",
     "poster_url": "https://m.media-amazon.com/images/M/MV5BZWU0NWZhYzMtZmNlYy00MjA1LTgyZWEtYmNjNzdjYmRkOTkzXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
   },
   {
     "id": 305,
-    "title": "Shadows of Old Mill",
-    "description": "A journalist reopening a thirty-year-old cold case finds that every witness tells the exact same lie.",
+    "title": "Murder on the Orient Express",
+    "description": "When a murder occurs on the train on which he’s travelling, celebrated detective Hercule Poirot is recruited to solve the case.",
     "genre": "Mystery",
-    "duration_min": 124,
-    "release_year": 2024,
+    "duration_min": 114,
+    "release_year": 2017,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BYjg3ZDE0YmEtMzUyMC00YTE5LTkyYjAtNDExNjMwODg4ZmY4XkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "poster_url": "https://m.media-amazon.com/images/M/MV5BNTlkYjBlZTctZjg2YS00NDMzLTlkMTMtNWExMGYyOTliMmEzXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
   },
   {
     "id": 306,
-    "title": "The Amber Key",
-    "description": "Six heirs gather at a lakeside estate where the will is hidden behind a series of mechanical riddles.",
+    "title": "The Da Vinci Code",
+    "description": "A murder inside the Louvre, and clues in Da Vinci paintings, lead to the discovery of a religious mystery.",
     "genre": "Mystery",
-    "duration_min": 117,
-    "release_year": 2023,
+    "duration_min": 149,
+    "release_year": 2006,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BMTUwMjc3NjExMl5BMl5BanBnXkFtZTgwMzIwNDU1MTI@._V1_FMjpg_UX800_.jpg"
+    "poster_url": "https://m.media-amazon.com/images/M/MV5BMjIxMjQyMTc3Nl5BMl5BanBnXkFtZTcwMTA1MDUzMw@@._V1_FMjpg_UX800_.jpg"
   },
   {
     "id": 307,
-    "title": "Midnight Alibi",
-    "description": "A theater director must prove his lead actor’s innocence before the final curtain falls.",
+    "title": "Prisoners",
+    "description": "When Keller Dover’s daughter and her friend go missing, he takes matters into his own hands as the police pursue multiple leads.",
     "genre": "Mystery",
-    "duration_min": 110,
-    "release_year": 2023,
+    "duration_min": 153,
+    "release_year": 2013,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BMTgzNzQ3Mzg2NV5BMl5BanBnXkFtZTcwMTU3NjYxNA@@._V1_FMjpg_UX800_.jpg"
+    "poster_url": "https://m.media-amazon.com/images/M/MV5BMTg0NTIzMjQ1NV5BMl5BanBnXkFtZTcwNDc3MzM5OQ@@._V1_FMjpg_UX800_.jpg"
   },
   {
     "id": 308,
-    "title": "Room 404",
-    "description": "A grand hotel archivist uncovers a guest ledger recording visitors who never checked out.",
+    "title": "Glass Onion",
+    "description": "Tech billionaire Miles Bron invites his friends for a getaway on his private Greek island, where a mystery unfolds.",
     "genre": "Mystery",
-    "duration_min": 115,
+    "duration_min": 139,
     "release_year": 2022,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BMGYxMzA1MTctYjRjMS00MjBiLWJhZDYtNjllNGQxYTkxN2JjXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "poster_url": "https://m.media-amazon.com/images/M/MV5BMzI2ZDYxZTEtMzVlOC00OTUyLTgyNTAtYWFhNmRhZjAzZWE1XkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
   },
   {
     "id": 309,
-    "title": "The Fog over Näsi",
-    "description": "Two detectives piece together a disappearance linked to an old industrial steam tunnel.",
+    "title": "The Girl with the Dragon Tattoo",
+    "description": "Journalist Mikael Blomkvist is aided in his search for a woman who has been missing for forty years by Lisbeth Salander.",
     "genre": "Mystery",
-    "duration_min": 121,
-    "release_year": 2021,
+    "duration_min": 158,
+    "release_year": 2011,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BMTQ3NzQ2ODYzMl5BMl5BanBnXkFtZTgwMDA4OTAzMTE@._V1_FMjpg_UX800_.jpg"
+    "poster_url": "https://m.media-amazon.com/images/M/MV5BMTczNDk4NTQ0OV5BMl5BanBnXkFtZTcwNDAxMDgxNw@@._V1_FMjpg_UX800_.jpg"
   },
   {
     "id": 4,
-    "title": "Wildwood",
-    "description": "A family discovers that the forest beyond their town is full of unexpected magic.",
+    "title": "Jurassic Park",
+    "description": "A pragmatic paleontologist touring an almost complete theme park on an island in Central America is tasked with protecting two kids.",
     "genre": "Adventure",
-    "duration_min": 110,
-    "release_year": 2023,
-    "age_rating": "PG",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BN2JjOGQ1OGMtZmUwYS00YmQ2LTllNzQtZjU2YjY1NzM2NzJjXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "duration_min": 127,
+    "release_year": 1993,
+    "age_rating": "PG-13",
+    "poster_url": "https://m.media-amazon.com/images/M/MV5BMjM2MDgxMDg0Nl5BMl5BanBnXkFtZTgwNTM2OTM5NDE@._V1_FMjpg_UX800_.jpg"
   },
   {
     "id": 401,
-    "title": "Beyond the Northern Ridge",
-    "description": "Two mountaineers and a rescue dog traverse an uncharted glacier to locate a downed mail plane.",
+    "title": "Pirates of the Caribbean: The Curse of the Black Pearl",
+    "description": "Blacksmith Will Turner teams up with eccentric pirate Captain Jack Sparrow to save his love from Jack’s former pirate allies.",
     "genre": "Adventure",
-    "duration_min": 126,
-    "release_year": 2026,
-    "age_rating": "PG",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BZWYyZGNjMjMtYTIxMi00ZmNkLWFhOTYtMjU5OWVhODYxMTQwXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "duration_min": 143,
+    "release_year": 2003,
+    "age_rating": "PG-13",
+    "poster_url": "https://m.media-amazon.com/images/M/MV5BNDhlMzEyNzItMTA5Mi00YWRhLThlNTktYTQyMTA0MDIyNDEyXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
   },
   {
     "id": 402,
-    "title": "Compass of the Wind",
-    "description": "A young cartographer sets sail across treacherous straits using an ancient brass astrolabe.",
+    "title": "Indiana Jones and the Last Crusade",
+    "description": "In 1938, after his father goes missing while pursuing the Holy Grail, Indiana Jones finds himself up against Adolf Hitler’semann.",
     "genre": "Adventure",
-    "duration_min": 120,
-    "release_year": 2025,
-    "age_rating": "PG",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BMjEzMjc3MjIyMl5BMl5BanBnXkFtZTcwNjI5Nzg4Mw@@._V1_FMjpg_UX800_.jpg"
+    "duration_min": 127,
+    "release_year": 1989,
+    "age_rating": "PG-13",
+    "poster_url": "https://m.media-amazon.com/images/M/MV5BNGIxNzQ0YzYtMjNmYi00YjBlLWFjNzEtNGE3ZGFmYTczM2MwXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
   },
   {
     "id": 403,
-    "title": "The Sunken Citadel",
-    "description": "Deep-sea divers exploring a Mediterranean trench uncover a preserved bronze-age amphitheater.",
+    "title": "The Lord of the Rings: The Fellowship of the Ring",
+    "description": "A meek Hobbit from the Shire and eight companions set out on a journey to destroy the powerful One Ring.",
     "genre": "Adventure",
-    "duration_min": 118,
-    "release_year": 2025,
+    "duration_min": 178,
+    "release_year": 2001,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BNDJkZmVkMjgtZDhhYi00ZmQzLTk4OTktYWUwNWFlODIxMmZhXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "poster_url": "https://m.media-amazon.com/images/M/MV5BNzIxMDQ2YTctNDY4MC00ZTRhLTk4ODQtMTVlOWY4NTdiYmMwXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
   },
   {
     "id": 404,
-    "title": "Skyward Caravan",
-    "description": "A crew of airship couriers races across desert canyons to deliver a royal treaty before sundown.",
+    "title": "Jumanji: Welcome to the Jungle",
+    "description": "Four teenagers are sucked into a magical video game, and the only way they can escape is to work together to finish the game.",
     "genre": "Adventure",
-    "duration_min": 114,
-    "release_year": 2024,
-    "age_rating": "PG",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BMjkyMTE1OTYwNF5BMl5BanBnXkFtZTcwMDIxODYzMw@@._V1_FMjpg_UX800_.jpg"
+    "duration_min": 119,
+    "release_year": 2017,
+    "age_rating": "PG-13",
+    "poster_url": "https://m.media-amazon.com/images/M/MV5BZjI5MzdmODctYjA4NS00ZmMxLWJlOWUtOGVhMjA0OGMxMWYzXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
   },
   {
     "id": 405,
-    "title": "Emerald Rapids",
-    "description": "Four cousins on a summer kayak expedition follow a forgotten river map to a hidden waterfall cavern.",
+    "title": "The Mummy",
+    "description": "At an archaeological dig in the ancient city of Hamunaptra, an American serving in the French Foreign Legion awakens a mummy.",
     "genre": "Adventure",
-    "duration_min": 106,
-    "release_year": 2024,
-    "age_rating": "PG",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BMDc1MWZmZGYtYTQ0NS00MjJhLThjOTEtNTliYTMzMzM1MjliXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "duration_min": 124,
+    "release_year": 1999,
+    "age_rating": "PG-13",
+    "poster_url": "https://m.media-amazon.com/images/M/MV5BMTY4YWE0OGMtNjU0Yi00YzIwLTk3NTktM2ZiYWQwNjM4MmMxXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
   },
   {
     "id": 406,
-    "title": "Guardians of the Taiga",
-    "description": "A wildlife photographer and a ranger track a rare white lynx across the northern wilderness.",
+    "title": "Life of Pi",
+    "description": "A young man who survives a disaster at sea is hurtled into an epic journey of adventure and discovery with a Bengal tiger.",
     "genre": "Adventure",
-    "duration_min": 112,
-    "release_year": 2023,
+    "duration_min": 127,
+    "release_year": 2012,
     "age_rating": "PG",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BM2ZmNjQ2MzAtNDlhNi00MmQyLWJhZDMtNmJiMjFlOWY4MzcxXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "poster_url": "https://m.media-amazon.com/images/M/MV5BNTg2OTY2ODg5OF5BMl5BanBnXkFtZTcwODM5MTYxOA@@._V1_FMjpg_UX800_.jpg"
   },
   {
     "id": 407,
-    "title": "The Lost Astrolabe",
-    "description": "An archaeology student decodes Viking runestones leading to a hidden fjord sanctuary.",
+    "title": "The Revenant",
+    "description": "A frontiersman on a fur trading expedition in the 1820s fights for survival after being mauled by a bear.",
     "genre": "Adventure",
-    "duration_min": 122,
-    "release_year": 2023,
+    "duration_min": 156,
+    "release_year": 2015,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BNmQzODFlMzEtYmJiMS00NWIwLWJjOTYtODg5MmFmZGE3YTQzXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "poster_url": "https://m.media-amazon.com/images/M/MV5BYTgwNmQzZDctMjNmOS00OTExLTkwM2UtNzJmOTJhODFjOTdlXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
   },
   {
     "id": 408,
-    "title": "Storm Chasers of Bothnia",
-    "description": "A father-daughter sailing crew braves an autumn gale to guide a stranded ferry to safety.",
+    "title": "National Treasure",
+    "description": "A historian races to find the legendary Templar Treasure before a team of mercenaries.",
     "genre": "Adventure",
-    "duration_min": 115,
-    "release_year": 2022,
-    "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BMTU5ODM2NDMwNF5BMl5BanBnXkFtZTgwMzMxNTczMjE@._V1_FMjpg_UX800_.jpg"
+    "duration_min": 131,
+    "release_year": 2004,
+    "age_rating": "PG",
+    "poster_url": "https://m.media-amazon.com/images/M/MV5BMTY3NTc4OTYxMF5BMl5BanBnXkFtZTcwMjk5NzUyMw@@._V1_FMjpg_UX800_.jpg"
   },
   {
     "id": 409,
-    "title": "Trail of the Sunstone",
-    "description": "Three siblings follow their grandfather’s expedition journal across volcanic highlands.",
+    "title": "Jungle Cruise",
+    "description": "Based on Disneyland’s theme park ride where a small riverboat takes a group of travelers through a jungle filled with dangerous animals.",
     "genre": "Adventure",
-    "duration_min": 109,
+    "duration_min": 127,
     "release_year": 2021,
-    "age_rating": "PG",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BYzEwMzk0MjMtNjQzOS00OTFiLWJlZWQtODJkODk1OTQzMWMwXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "age_rating": "PG-13",
+    "poster_url": "https://m.media-amazon.com/images/M/MV5BMWU5ZTBkMjQtMzg2Yi00ZmJlLTk4YWEtYTc0ZjU1YzE1NGNkXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
   },
   {
     "id": 5,
-    "title": "Laugh Track",
-    "description": "An aspiring comic gets one week to turn a tiny club into a big break.",
+    "title": "Home Alone",
+    "description": "An eight-year-old troublemaker, mistakenly left home alone, must defend his home against a pair of burglars on Christmas Eve.",
     "genre": "Comedy",
-    "duration_min": 97,
-    "release_year": 2022,
-    "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BMDE4ZWYyMmUtMmI3Yi00ZmZhLTkwZjgtNTI5NzI5NzRmNWIzXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "duration_min": 103,
+    "release_year": 1990,
+    "age_rating": "PG",
+    "poster_url": "https://m.media-amazon.com/images/M/MV5BNzNmNmQ2ZDEtMTc1MS00NjNiLThlMGUtZmQxNTg1Nzg5NWMzXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
   },
   {
     "id": 501,
-    "title": "Sauna Diplomacy",
-    "description": "A small-town mayor accidentally hosts an international trade summit inside a floating public sauna.",
+    "title": "The Hangover",
+    "description": "Three buddies wake up from a bachelor party in Las Vegas, with no memory of the previous night and the bachelor missing.",
     "genre": "Comedy",
-    "duration_min": 98,
-    "release_year": 2026,
-    "age_rating": "PG",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BMTFhODlhMGMtNTA4Yy00MjNhLWFiNjMtMTFkMjRkN2FmMjAyXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "duration_min": 100,
+    "release_year": 2009,
+    "age_rating": "PG-13",
+    "poster_url": "https://m.media-amazon.com/images/M/MV5BNDI2MzBhNzgtOWYyOS00NDM2LWE0OGYtOGQ0M2FjMTI2NTllXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
   },
   {
     "id": 502,
-    "title": "The Wrong Luggage",
-    "description": "Two travelers swap identical suitcases at the airport—one filled with wedding rings, the other with cheese.",
+    "title": "Superbad",
+    "description": "Two co-dependent high school seniors are forced to deal with separation anxiety after their plan to stage a party goes awry.",
     "genre": "Comedy",
-    "duration_min": 95,
-    "release_year": 2025,
-    "age_rating": "PG",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BMjI3ODkzNDk5MF5BMl5BanBnXkFtZTgwNTEyNjY2NDM@._V1_FMjpg_UX800_.jpg"
+    "duration_min": 113,
+    "release_year": 2007,
+    "age_rating": "PG-13",
+    "poster_url": "https://m.media-amazon.com/images/M/MV5BNjk0MzdlZGEtNTRkOC00ZDRiLWJkYjAtMzUzYTRiNzk1YTViXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
   },
   {
     "id": 503,
-    "title": "Startup in the Garage",
-    "description": "Three retired engineers build a smart snowplow that becomes an accidental social media sensation.",
+    "title": "The Grand Budapest Hotel",
+    "description": "A writer encounters the owner of an aging high-class hotel, who tells him of his early years serving as a lobby boy.",
     "genre": "Comedy",
-    "duration_min": 101,
-    "release_year": 2025,
-    "age_rating": "PG",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BMmJkNGNiZWMtYjcwZS00OGNjLWI5MWMtNGM0ODZmZTc1MGJmXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "duration_min": 99,
+    "release_year": 2014,
+    "age_rating": "PG-13",
+    "poster_url": "https://m.media-amazon.com/images/M/MV5BMzM5NjUxOTEyMl5BMl5BanBnXkFtZTgwNjEyMDM0MDE@._V1_FMjpg_UX800_.jpg"
   },
   {
     "id": 504,
-    "title": "Dinner at Eight-Ish",
-    "description": "An overly ambitious home chef tries to cook a seven-course meal while the power goes out.",
+    "title": "Mrs. Doubtfire",
+    "description": "After a bitter divorce, an actor disguises himself as a female housekeeper to spend time with his children.",
     "genre": "Comedy",
-    "duration_min": 94,
-    "release_year": 2024,
+    "duration_min": 125,
+    "release_year": 1993,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BNDc0MjBlYzctMGNiMS00YmY4LThhMzQtZmZhZDk5YzczOTlkXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "poster_url": "https://m.media-amazon.com/images/M/MV5BY2E2MDc5ZGEtOTNlZS00Mjg4LThlNzUtMDY2Zjc4ZTViNWY0XkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
   },
   {
     "id": 505,
-    "title": "Choir Chaos",
-    "description": "A heavy-metal drummer is volunteered to conduct his neighborhood’s traditional spring choir.",
+    "title": "Night at the Museum",
+    "description": "A newly recruited night security guard at the Museum of Natural History discovers that an ancient curse causes the animals to come to life.",
     "genre": "Comedy",
-    "duration_min": 103,
-    "release_year": 2024,
+    "duration_min": 108,
+    "release_year": 2006,
     "age_rating": "PG",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BOTg2NDU4Mjg2NV5BMl5BanBnXkFtZTgwNjQ0MDIyMDI@._V1_FMjpg_UX800_.jpg"
+    "poster_url": "https://m.media-amazon.com/images/M/MV5BNGMyYjYyZDAtNzRiZC00ZjRkLTkwYjktODkxODQzNTFiMTVmXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
   },
   {
     "id": 506,
-    "title": "House Sitters",
-    "description": "Two broke university friends agree to pet-sit a mansion, unaware the owner has three parrots and an alpaca.",
+    "title": "School of Rock",
+    "description": "After being kicked out of his rock band, Dewey Finn becomes a substitute teacher of an uptight elementary private school.",
     "genre": "Comedy",
-    "duration_min": 96,
-    "release_year": 2023,
-    "age_rating": "PG",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BNzk5ZTIyYjgtZDc4Zi00MTA0LWJkN2ItM2FjMDI3NmFlNjdjXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "duration_min": 109,
+    "release_year": 2003,
+    "age_rating": "PG-13",
+    "poster_url": "https://m.media-amazon.com/images/M/MV5BOTg2NDU4Mjg2NV5BMl5BanBnXkFtZTgwNjQ0MDIyMDI@._V1_FMjpg_UX800_.jpg"
   },
   {
     "id": 507,
-    "title": "Midnight Karaoke",
-    "description": "A shy accountant enters a national karaoke tournament to win back his family’s vintage jukebox.",
+    "title": "The Intern",
+    "description": "Seventy-year-old widower Ben Whittaker has discovered that retirement isn’t all it’s cracked up to be and becomes a senior intern.",
     "genre": "Comedy",
-    "duration_min": 99,
-    "release_year": 2023,
+    "duration_min": 121,
+    "release_year": 2015,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BZDNhNmMyM2QtZGFiNi00N2UwLTgyZmQtOWQyZjU1MzNmYjJmXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "poster_url": "https://m.media-amazon.com/images/M/MV5BMTUyNjE5NjI5OF5BMl5BanBnXkFtZTgwNzYzMzU3NjE@._V1_FMjpg_UX800_.jpg"
   },
   {
     "id": 508,
-    "title": "The Substitute Coach",
-    "description": "A drama teacher takes over a struggling curling team two weeks before the regional championship.",
+    "title": "Game Night",
+    "description": "A group of friends who meet regularly for game nights find themselves entangled in a real-life mystery.",
     "genre": "Comedy",
-    "duration_min": 102,
-    "release_year": 2022,
-    "age_rating": "PG",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BOTQyNTEzNDEtNDBkNS00YzMwLWExMWQtMWIwYWY1Y2RhMjkyXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "duration_min": 100,
+    "release_year": 2018,
+    "age_rating": "PG-13",
+    "poster_url": "https://m.media-amazon.com/images/M/MV5BMjI3ODkzNDk5MF5BMl5BanBnXkFtZTgwNTEyNjY2NDM@._V1_FMjpg_UX800_.jpg"
   },
   {
     "id": 509,
-    "title": "Parking Inspector #1",
-    "description": "An ultra-by-the-book traffic warden teams up with a chaotic scooter courier to find a stolen statue.",
+    "title": "Free Guy",
+    "description": "When a bank teller discovers he’s actually a background player in an open-world video game, he decides to become the hero.",
     "genre": "Comedy",
-    "duration_min": 93,
+    "duration_min": 115,
     "release_year": 2021,
-    "age_rating": "PG",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BYjFkZTkzZTQtNjM1ZS00M2EyLWE3MTAtMmY5Yzk0NTc0NDc3XkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "age_rating": "PG-13",
+    "poster_url": "https://m.media-amazon.com/images/M/MV5BN2I0MGMxYjUtZTZiMS00MzMxLTkzNWYtMDUyZmUwY2ViYTljXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
   },
   {
     "id": 6,
-    "title": "Deep Blue",
-    "description": "A marine biologist uncovers a mystery in the deepest part of the ocean.",
+    "title": "The Shawshank Redemption",
+    "description": "Over the course of several years, two convicts form a friendship, seeking consolation and, eventually, redemption through basic compassion.",
     "genre": "Drama",
-    "duration_min": 121,
-    "release_year": 2021,
+    "duration_min": 142,
+    "release_year": 1994,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BMTM5OTUyYWYtMGE2OS00ODEzLTk0ZjctZmQ5NzFlNWQ3OTAxXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "poster_url": "https://m.media-amazon.com/images/M/MV5BMDAyY2FhYjctNDc5OS00MDNlLThiMGUtY2UxYWVkNGY2ZjljXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
   },
   {
     "id": 601,
-    "title": "The Winter Violin",
-    "description": "A master luthier in his final year of work takes on a headstrong apprentice from the city.",
+    "title": "Oppenheimer",
+    "description": "The story of American scientist J. Robert Oppenheimer and his role in the development of the atomic bomb.",
     "genre": "Drama",
-    "duration_min": 128,
-    "release_year": 2026,
-    "age_rating": "PG",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BMjA4MDc3NjEwNl5BMl5BanBnXkFtZTcwMjU4MjcyMQ@@._V1_FMjpg_UX800_.jpg"
+    "duration_min": 180,
+    "release_year": 2023,
+    "age_rating": "PG-13",
+    "poster_url": "https://m.media-amazon.com/images/M/MV5BN2JkMDc5MGQtZjg3YS00NmFiLWIyZmQtZTJmNTM5MjVmYTQ4XkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
   },
   {
     "id": 602,
-    "title": "Northern Lights & Iron",
-    "description": "Three generations of a shipyard family navigate the closing of their coastal drydock.",
+    "title": "Forrest Gump",
+    "description": "The history of the United States from the 1950s to the 70s unfolds from the perspective of an Alabama man with an IQ of 75.",
     "genre": "Drama",
-    "duration_min": 132,
-    "release_year": 2025,
+    "duration_min": 142,
+    "release_year": 1994,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BODYyZmRkNTctZjY3Zi00OGVhLWIyZWYtMGNmOTllOTgzMzllXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "poster_url": "https://m.media-amazon.com/images/M/MV5BNDYwNzVjMTItZmU5YS00YjQ5LTljYjgtMjY2NDVmYWMyNWFmXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
   },
   {
     "id": 603,
-    "title": "The Glassblower’s Daughter",
-    "description": "A young artisan fights to keep her family’s traditional glass studio alive during an economic downturn.",
+    "title": "The Pursuit of Happyness",
+    "description": "A struggling salesman takes custody of his son as he’s poised to begin a life-changing professional career.",
     "genre": "Drama",
-    "duration_min": 119,
-    "release_year": 2025,
+    "duration_min": 117,
+    "release_year": 2006,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BZGRhNzQzNjAtZWNhNi00NTMwLWJmNmQtMmUxOWU4YTE3YjA0XkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "poster_url": "https://m.media-amazon.com/images/M/MV5BMTQ5NjQ0NDI3NF5BMl5BanBnXkFtZTcwNDI0MjEzMw@@._V1_FMjpg_UX800_.jpg"
   },
   {
     "id": 604,
-    "title": "Quiet Harbor",
-    "description": "A retired ferry captain forms an unlikely friendship with a newcomer learning to read Finnish.",
+    "title": "The Green Mile",
+    "description": "A tale set on death row where gentle giant John Coffey possesses the mysterious power to heal people’s ailments.",
     "genre": "Drama",
-    "duration_min": 115,
-    "release_year": 2024,
-    "age_rating": "PG",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BOGEzNzJjNmItZjZkNy00YzI4LWJiOGYtYzc2N2ZlMzJiNGMwXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "duration_min": 189,
+    "release_year": 1999,
+    "age_rating": "PG-13",
+    "poster_url": "https://m.media-amazon.com/images/M/MV5BMTUxMzQyNjA5MF5BMl5BanBnXkFtZTYwOTU2NTY3._V1_FMjpg_UX800_.jpg"
   },
   {
     "id": 605,
-    "title": "First Snow in October",
-    "description": "Two estranged brothers reunite in Oulu to pack up their childhood home over one weekend.",
+    "title": "A Beautiful Mind",
+    "description": "After John Nash, a brilliant but asocial mathematician, accepts secret work in cryptography, his life takes a turn.",
     "genre": "Drama",
-    "duration_min": 117,
-    "release_year": 2024,
+    "duration_min": 135,
+    "release_year": 2001,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BMmFjNWZkNjctYjNiMS00YmFmLWFjZTMtYzNjZjAyZTBkOWI5XkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "poster_url": "https://m.media-amazon.com/images/M/MV5BYjgzNjFkMmItOGJhNi00NWM3LWJlYTUtNDExMGQ3ZTI3NjJkXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
   },
   {
     "id": 606,
-    "title": "The Orchestra of Small Things",
-    "description": "A community music teacher rallies parents and students when their school auditorium faces demolition.",
+    "title": "Whiplash",
+    "description": "A promising young drummer enrolls at a cut-throat music conservatory where his dreams of greatness are mentored by an instructor.",
     "genre": "Drama",
-    "duration_min": 124,
-    "release_year": 2023,
-    "age_rating": "PG",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BYmE4YTY1ZjctZTUwMi00ZWU3LWI5OTEtN2Y2ZDQyMjVlYWJkXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "duration_min": 106,
+    "release_year": 2014,
+    "age_rating": "PG-13",
+    "poster_url": "https://m.media-amazon.com/images/M/MV5BMDFjOWFkYzktYzhhMC00NmYyLTkwY2EtYjViMDhmNzg0OGFkXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
   },
   {
     "id": 607,
-    "title": "Paper Mill Road",
-    "description": "An investigative reporter returns to her industrial hometown to write the story of its transformation.",
+    "title": "Good Will Hunting",
+    "description": "Will Hunting, a janitor at M.I.T., has a gift for mathematics, but needs help from a psychologist to find direction in his life.",
     "genre": "Drama",
     "duration_min": 126,
-    "release_year": 2023,
+    "release_year": 1997,
     "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BMjIyOTM5OTIzNV5BMl5BanBnXkFtZTgwMDkzODE2NjE@._V1_FMjpg_UX800_.jpg"
+    "poster_url": "https://m.media-amazon.com/images/M/MV5BNDdjZGQ5YzEtNTc2My00Mjc0LWFlMTctYzkwMzZlNzdiZWYzXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
   },
   {
     "id": 608,
-    "title": "After the Applause",
-    "description": "A celebrated theater actress steps away from the stage to mentor young playwrights.",
+    "title": "The Truman Show",
+    "description": "An insurance salesman discovers his whole life is actually a reality TV show broadcast to the world.",
     "genre": "Drama",
-    "duration_min": 118,
-    "release_year": 2022,
-    "age_rating": "PG-13",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BNmU4NjZmYWYtN2IwNi00N2YxLTljNDUtYjQwOGViM2YyZDQyXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "duration_min": 103,
+    "release_year": 1998,
+    "age_rating": "PG",
+    "poster_url": "https://m.media-amazon.com/images/M/MV5BNzA3ZjZlNzYtMTdjMy00NjMzLTk5ZGYtMTkyYzNiOGM1YmM3XkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
   },
   {
     "id": 609,
-    "title": "Birch & Stone",
-    "description": "A carpenter building a summer cottage by hand reflects on the decades that shaped his family.",
+    "title": "The Social Network",
+    "description": "As Harvard student Mark Zuckerberg creates the social networking site that would become known as Facebook, he is sued by the twins.",
     "genre": "Drama",
     "duration_min": 120,
-    "release_year": 2021,
-    "age_rating": "PG",
-    "poster_url": "https://m.media-amazon.com/images/M/MV5BNjkxZmFkYWMtNmYwOC00YTM5LThhNjItNzNmODlkY2JhNDgxXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
+    "release_year": 2010,
+    "age_rating": "PG-13",
+    "poster_url": "https://m.media-amazon.com/images/M/MV5BMjlkNTE5ZTUtNGEwNy00MGVhLThmZjMtZjU1NDE5Zjk1NDZkXkEyXkFqcGc@._V1_FMjpg_UX800_.jpg"
   }
 ];
