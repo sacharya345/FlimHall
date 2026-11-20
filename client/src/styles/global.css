@@ -135,7 +135,7 @@ a { color: inherit; }
 .movie-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
 .movie-card { overflow: hidden; border: 1px solid var(--line); background: var(--surface); transition: border-color .2s, transform .2s; }
 .movie-card:hover { border-color: #5e503b; transform: translateY(-3px); }
-.movie-art { display: flex; width: 100%; height: 230px; object-fit: cover; }
+.movie-art { display: block; width: 100%; height: auto; aspect-ratio: 2 / 3; object-fit: contain; object-position: center; background-color: #111; }
 .movie-art-placeholder {
   flex-direction: column; justify-content: end; padding: 20px;
   background: radial-gradient(ellipse at 70% 20%, #5b3e20 0, transparent 42%), linear-gradient(130deg, #30291f, #131312 65%);
@@ -283,7 +283,7 @@ a { color: inherit; }
   .search-field, .genre-field { min-width: 0; min-height: 48px; }
   .search-field input, .genre-field select { min-height: 48px; font-size: 16px; }
   .movie-grid { grid-template-columns: minmax(0, 1fr); gap: 14px; }
-  .movie-art { height: auto; aspect-ratio: 16 / 10; }
+  .movie-art { height: auto; aspect-ratio: 2 / 3; }
   .movie-card-copy { padding: 15px; }
   .text-button { min-height: 40px; }
   .details-section { margin-bottom: 42px; padding: 18px 14px; }
