@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { getHealth } from '../controllers/healthController.js';
-import { login } from '../controllers/authController.js';
+import { customerAuth, login, registerStaff } from '../controllers/authController.js';
 import {
   getMovie,
   getSeats,
@@ -30,6 +30,8 @@ const router = Router();
 
 router.get('/health', getHealth);
 router.post('/auth/login', login);
+router.post('/auth/customer', customerAuth);
+router.post('/auth/staff', registerStaff);
 
 router.get('/movies/genres', listGenres);
 router.get('/movies', listMovies);
