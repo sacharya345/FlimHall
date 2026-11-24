@@ -15,7 +15,7 @@ FilmHall follows a three-tier architecture:
 
 The frontend communicates with the backend through REST API requests. The backend handles application logic and communicates with PostgreSQL to retrieve and store data.
 
-The movie browsing functionality has been deployed and verified. Additional booking and staff management functionality forms part of the ongoing development.
+The movie browsing, interactive auditorium seat selection, customer booking, and staff administration workflows have been implemented and verified.
 
 ---
 
