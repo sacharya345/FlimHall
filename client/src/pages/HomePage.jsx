@@ -581,20 +581,50 @@ export default function HomePage() {
     }
   }
 
-  function handleCustomerAuth(event) {
+  async function handleCustomerAuth(event) {
     event.preventDefault();
-    const account = {
+    const fallbackAccount = {
       name: accountForm.name.trim() || 'FlimHall Member',
       email: accountForm.email.trim().toLowerCase()
     };
-    localStorage.setItem('flimhall-customer-account', JSON.stringify(account));
-    setCustomerAccount(account);
-    setCustomer((prev) => ({
-      name: prev.name || account.name,
-      email: prev.email || account.email
-    }));
-    setAccountForm({ name: '', email: '', password: '' });
-    setNotice(`Signed in as ${account.name}. You can now reserve up to 6 tickets to pay at the theater counter.`);
+
+    try {
+      const result = await apiRequest('/auth/customer', {
+        method: 'POST',
+        body: {
+          name: fallbackAccount.name,
+          email: fallbackAccount.email,
+          password: accountForm.password
+        }
+      });
+      const savedAccount = result.account || fallbackAccount;
+      localStorage.setItem('flimhall-customer-account', JSON.stringify(savedAccount));
+      setCustomerAccount(savedAccount);
+      setCustomer((prev) => ({
+        name: prev.name || savedAccount.name,
+        email: prev.email || savedAccount.email
+      }));
+      setAccountForm({ name: '', email: '', password: '' });
+      setError('');
+      setNotice(
+        result.isNewAccount
+          ? `Account created and saved in database for ${savedAccount.name} (${savedAccount.email}).`
+          : `Signed in as ${savedAccount.name}. You can now reserve up to 6 tickets to pay at the theater counter.`
+      );
+    } catch (requestError) {
+      if (usingFallbackCatalog) {
+        localStorage.setItem('flimhall-customer-account', JSON.stringify(fallbackAccount));
+        setCustomerAccount(fallbackAccount);
+        setCustomer((prev) => ({
+          name: prev.name || fallbackAccount.name,
+          email: prev.email || fallbackAccount.email
+        }));
+        setAccountForm({ name: '', email: '', password: '' });
+        setNotice(`Signed in as ${fallbackAccount.name}. You can now reserve up to 6 tickets to pay at the theater counter.`);
+        return;
+      }
+      reportError(requestError);
+    }
   }
 
   function handleCustomerLogout() {
@@ -608,33 +638,15 @@ export default function HomePage() {
     event.preventDefault();
     const emailLower = login.email.trim().toLowerCase();
 
-    // 1. Check owner-created staff accounts stored in localStorage first
-    const matchedStaff = staffAccounts.find(
-      (acc) => acc.email.toLowerCase() === emailLower && acc.password === login.password
-    );
-    if (matchedStaff) {
-      const profile = {
-        email: matchedStaff.email,
-        name: matchedStaff.name,
-        role: 'staff',
-        location: matchedStaff.location
-      };
-      sessionStorage.setItem('flimhall-staff-token', 'demo-staff-token');
-      sessionStorage.setItem('flimhall-staff-profile', JSON.stringify(profile));
-      setStaffToken('demo-staff-token');
-      setStaffProfile(profile);
-      setLogin({ email: '', password: '' });
-      setError('');
-      setNotice(`Signed in as Staff Member: ${matchedStaff.name} (${matchedStaff.email}).`);
-      return;
-    }
-
-    // 2. Try backend /auth/login
+    // 1. Try backend PostgreSQL /auth/login first
     try {
       const result = await apiRequest('/auth/login', { method: 'POST', body: login });
       const profile = {
         email: result.staff.email,
-        name: result.staff.email === 'admin@flimhall.com' ? 'Main Admin Owner' : 'Theater Staff',
+        name:
+          result.staff.name ||
+          (result.staff.email === 'admin@flimhall.com' ? 'Main Admin Owner' : 'Theater Staff'),
+        location: result.staff.location || 'Oulu & Tampere',
         role: result.staff.role === 'admin' || result.staff.email === 'admin@flimhall.com' ? 'owner' : 'staff'
       };
       sessionStorage.setItem('flimhall-staff-token', result.token);
@@ -643,8 +655,30 @@ export default function HomePage() {
       setStaffProfile(profile);
       setLogin({ email: '', password: '' });
       setError('');
-      setNotice(`Signed in as ${result.staff.email}.`);
+      setNotice(`Signed in as ${profile.name} (${result.staff.email}).`);
+      return;
     } catch (requestError) {
+      // 2. Fall back to owner-created staff accounts in localStorage or default demo credentials
+      const matchedStaff = staffAccounts.find(
+        (acc) => acc.email.toLowerCase() === emailLower && acc.password === login.password
+      );
+      if (matchedStaff) {
+        const profile = {
+          email: matchedStaff.email,
+          name: matchedStaff.name,
+          role: 'staff',
+          location: matchedStaff.location
+        };
+        sessionStorage.setItem('flimhall-staff-token', 'demo-staff-token');
+        sessionStorage.setItem('flimhall-staff-profile', JSON.stringify(profile));
+        setStaffToken('demo-staff-token');
+        setStaffProfile(profile);
+        setLogin({ email: '', password: '' });
+        setError('');
+        setNotice(`Signed in as Staff Member: ${matchedStaff.name} (${matchedStaff.email}).`);
+        return;
+      }
+
       const isMainOwner = emailLower === 'admin@flimhall.com';
       const isDefaultStaff = emailLower === 'staff@flimhall.com';
       const validDemoPass = login.password === 'FlimHall2026!' || login.password === 'admin123';
@@ -671,13 +705,15 @@ export default function HomePage() {
     }
   }
 
-  function createStaffAccount(event) {
+  async function createStaffAccount(event) {
     event.preventDefault();
     const isAlreadySignedInAsOwner = Boolean(staffToken && staffProfile?.role === 'owner');
     if (!isAlreadySignedInAsOwner) {
       const ownerEmailLower = newStaffForm.ownerEmail.trim().toLowerCase();
       const validOwnerPass =
-        newStaffForm.ownerPassword === 'FlimHall2026!' || newStaffForm.ownerPassword === 'admin123';
+        newStaffForm.ownerPassword === 'FlimHall2026!' ||
+        newStaffForm.ownerPassword === 'admin123' ||
+        newStaffForm.ownerPassword === 'FlimHallAdmin2026!';
       if (ownerEmailLower !== 'admin@flimhall.com' || !validOwnerPass) {
         setError(
           'Only the Main Admin Owner (admin@flimhall.com / FlimHall2026!) can authorize creating a new staff account.'
@@ -687,6 +723,57 @@ export default function HomePage() {
     }
 
     const targetEmail = newStaffForm.staffEmail.trim().toLowerCase();
+    const staffName = newStaffForm.staffName.trim() || 'FlimHall Staff';
+
+    try {
+      const dbCreated = await apiRequest('/auth/staff', {
+        method: 'POST',
+        body: {
+          ownerEmail: newStaffForm.ownerEmail.trim().toLowerCase() || 'admin@flimhall.com',
+          ownerPassword: newStaffForm.ownerPassword || 'FlimHall2026!',
+          name: staffName,
+          email: targetEmail,
+          password: newStaffForm.staffPassword,
+          location: newStaffForm.location
+        }
+      });
+
+      const created = {
+        id: dbCreated.id || Date.now(),
+        name: dbCreated.name || staffName,
+        email: dbCreated.email || targetEmail,
+        password: newStaffForm.staffPassword,
+        location: dbCreated.location || newStaffForm.location,
+        createdBy: 'admin@flimhall.com',
+        createdAt: new Date(dbCreated.created_at || Date.now()).toLocaleDateString()
+      };
+      const updatedList = [created, ...staffAccounts.filter((acc) => acc.email.toLowerCase() !== targetEmail)];
+      localStorage.setItem('flimhall-staff-accounts', JSON.stringify(updatedList));
+      setStaffAccounts(updatedList);
+      setNewStaffForm({
+        ownerEmail: 'admin@flimhall.com',
+        ownerPassword: '',
+        staffName: '',
+        staffEmail: '',
+        staffPassword: '',
+        location: 'Oulu & Tampere'
+      });
+      setError('');
+      setNotice(
+        `New staff account saved in database for ${created.name} (${created.email})! They can now sign in with their email and password.`
+      );
+      if (!staffToken) {
+        setStaffAuthMode('signin');
+        setLogin({ email: created.email, password: '' });
+      }
+      return;
+    } catch (requestError) {
+      if (!usingFallbackCatalog && requestError.message) {
+        reportError(requestError);
+        return;
+      }
+    }
+
     if (
       targetEmail === 'admin@flimhall.com' ||
       staffAccounts.some((acc) => acc.email.toLowerCase() === targetEmail)
@@ -697,7 +784,7 @@ export default function HomePage() {
 
     const created = {
       id: Date.now(),
-      name: newStaffForm.staffName.trim() || 'FlimHall Staff',
+      name: staffName,
       email: targetEmail,
       password: newStaffForm.staffPassword,
       location: newStaffForm.location,
