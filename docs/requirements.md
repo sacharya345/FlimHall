@@ -63,17 +63,22 @@ NFR4 — Compatibility: The system shall support the latest two stable versions 
 
 NFR5 — Booking integrity: The system shall prevent the same seat from being confirmed for two different bookings for the same screening, including when multiple customers attempt to book it concurrently.
 
-## 4. Questions for the Client
+## 4. Questions for the Client (Resolved Decisions)
 
 Q1: Must customers create accounts, or can they book tickets without registering?
+- **Decision:** Customers can browse and book tickets as guests using their name and email address, with optional customer account sign-in supported.
 
 Q2: Will the system support online payments, payment at the theater, or both?
+- **Decision:** Both modes are supported — customers can either pay online at checkout or reserve seats to pay at the cinema counter (up to 30 minutes before showtime).
 
 Q3: Will the application support one theater or multiple theater locations?
+- **Decision:** Multiple theater locations are supported (Oulu and Tampere auditoriums with 100-seat and 200-seat halls).
 
 Q4: What rules should apply to booking cancellations and refunds?
+- **Decision:** Confirmed bookings are eligible for cancellation up to two hours before the scheduled screening start time.
 
 Q5: Should customers receive booking confirmations or reminders by email, SMS, or through the application?
+- **Decision:** Customers receive an in-app confirmation receipt with a unique `FH-...` booking reference and an email confirmation when SMTP is configured.
 
 ## 5. Assumptions
 
