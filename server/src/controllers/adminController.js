@@ -1,5 +1,6 @@
 import pool from '../db.js';
 import { httpError, parseId } from '../utils/httpError.js';
+import { hashPassword } from '../utils/passwords.js';
 
 function validateMovie(input) {
   input = input && typeof input === 'object' ? input : {};
@@ -17,8 +18,8 @@ function validateMovie(input) {
     || !Number.isInteger(movie.release_year) || movie.release_year < 1888 || movie.release_year > 2100
     || movie.description.length > 5000 || movie.age_rating.length > 20
     || (movie.poster_url && movie.poster_url.length > 2048)
-    || (movie.poster_url && !/^https?:\/\//i.test(movie.poster_url))) {
-    throw httpError(400, 'Enter a title, genre, valid duration and release year, and optional HTTP(S) poster URL.');
+    || (movie.poster_url && !/^(https?:\/\/|\/posters\/)/i.test(movie.poster_url))) {
+    throw httpError(400, 'Enter a title, genre, valid duration and release year, and optional HTTP(S) or /posters/ poster URL.');
   }
   return movie;
 }
@@ -225,4 +226,31 @@ export async function cancelBooking(req, res) {
   );
   if (!rows[0]) throw httpError(409, 'Booking is not eligible for cancellation. Cancellations close two hours before showtime.');
   res.json({ message: `Booking ${rows[0].booking_ref} cancelled.` });
+}
+
+export async function listStaffAccounts(req, res) {
+  const { rows } = await pool.query(
+    'SELECT id, email, role, created_at FROM users ORDER BY created_at DESC'
+  );
+  res.json(rows);
+}
+
+export async function createStaffAccount(req, res) {
+  const body = req.body && typeof req.body === 'object' ? req.body : {};
+  const email = String(body.email || '').trim().toLowerCase();
+  const password = String(body.password || '');
+  const role = body.role === 'admin' ? 'admin' : 'staff';
+
+  if (!email || email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || password.length < 12) {
+    throw httpError(400, 'Enter a valid email address and a password of at least 12 characters.');
+  }
+
+  const passwordHash = await hashPassword(password);
+  const { rows } = await pool.query(
+    `INSERT INTO users (email, password_hash, role)
+     VALUES ($1, $2, $3)
+     RETURNING id, email, role, created_at`,
+    [email, passwordHash, role]
+  );
+  res.status(201).json(rows[0]);
 }
