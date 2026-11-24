@@ -14,15 +14,17 @@ import {
   cancelScreening,
   createMovie,
   createScreening,
+  createStaffAccount,
   deleteMovie,
   listAdminMovies,
   listAdminScreenings,
   listAuditoriums,
   listBookings,
+  listStaffAccounts,
   updateMovie,
   updateScreening
 } from '../controllers/adminController.js';
-import { requireStaff } from '../middleware/auth.js';
+import { requireAdmin, requireStaff } from '../middleware/auth.js';
 
 const router = Router();
 
@@ -50,5 +52,7 @@ router.put('/admin/screenings/:id', updateScreening);
 router.post('/admin/screenings/:id/cancel', cancelScreening);
 router.get('/admin/bookings', listBookings);
 router.post('/admin/bookings/:id/cancel', cancelBooking);
+router.get('/admin/staff', requireAdmin, listStaffAccounts);
+router.post('/admin/staff', requireAdmin, createStaffAccount);
 
 export default router;
