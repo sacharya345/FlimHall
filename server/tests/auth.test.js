@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { after, before, test } from 'node:test';
-import { createToken, requireStaff } from '../src/middleware/auth.js';
+import { createToken, requireAdmin, requireStaff } from '../src/middleware/auth.js';
 import { hashPassword, verifyPassword } from '../src/utils/passwords.js';
 
 const originalSecret = process.env.JWT_SECRET;
@@ -55,4 +55,25 @@ test('password hashes verify only the original password', async () => {
   assert.notEqual(hash, password);
   assert.equal(await verifyPassword(password, hash), true);
   assert.equal(await verifyPassword('wrong password', hash), false);
+});
+
+test('requireAdmin allows admin role and rejects staff role with 403', () => {
+  let adminPassed = false;
+  const adminRes = {
+    statusCode: 200,
+    status(code) { this.statusCode = code; return this; },
+    json(body) { this.body = body; return this; }
+  };
+  requireAdmin({ staff: { sub: 1, role: 'admin' } }, adminRes, () => { adminPassed = true; });
+  assert.equal(adminPassed, true);
+
+  let staffPassed = false;
+  const staffRes = {
+    statusCode: 200,
+    status(code) { this.statusCode = code; return this; },
+    json(body) { this.body = body; return this; }
+  };
+  requireAdmin({ staff: { sub: 2, role: 'staff' } }, staffRes, () => { staffPassed = true; });
+  assert.equal(staffPassed, false);
+  assert.equal(staffRes.statusCode, 403);
 });
