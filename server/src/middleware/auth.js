@@ -53,3 +53,10 @@ export function requireStaff(req, res, next) {
     return res.status(401).json({ message: 'Your staff session is invalid.' });
   }
 }
+
+export function requireAdmin(req, res, next) {
+  if (!req.staff || req.staff.role !== 'admin') {
+    return res.status(403).json({ message: 'Administrator privileges are required.' });
+  }
+  return next();
+}
