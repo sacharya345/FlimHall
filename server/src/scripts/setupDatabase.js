@@ -25,6 +25,7 @@ try {
   await runSql('../../../database/migrations/001_init.sql');
   await runSql('../../../database/migrations/002_movie_release_year.sql');
   await runSql('../../../database/migrations/003_user_accounts.sql');
+  await runSql('../../../database/migrations/004_booking_payment_details.sql');
   await runSql('../../../database/seeds/001_demo_data.sql');
 
   if (adminEmail) {
