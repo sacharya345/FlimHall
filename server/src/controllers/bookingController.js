@@ -37,7 +37,19 @@ async function resolveOrCreateScreening(client, { screeningId, movieInput, scree
     }
   }
   // Auto-provision movie, auditorium, and screening when booking a frontend catalog showtime
-  const title = String(movieInput?.title || 'FlimHall Feature').trim().slice(0, 180);
+  const title = String(movieInput?.title || '').trim().slice(0, 180);
+  if (!title) {
+    const { rows: anyScr } = await client.query(
+      `SELECT s.id, s.starts_at, s.base_price, s.status, m.title AS movie_title,
+              a.seat_rows, a.seat_columns, a.name AS auditorium
+       FROM screenings s
+       JOIN movies m ON m.id = s.movie_id
+       JOIN auditoriums a ON a.id = s.auditorium_id
+       WHERE s.status = 'scheduled' AND s.starts_at > now()
+       ORDER BY s.id ASC LIMIT 1 FOR UPDATE OF s`
+    );
+    return anyScr[0] || null;
+  }
   const description = String(movieInput?.description || '').trim().slice(0, 5000);
   const genre = String(movieInput?.genre || 'Drama').trim().slice(0, 80);
   const durationMin = Number.isInteger(Number(movieInput?.duration_min)) && Number(movieInput?.duration_min) > 0
