@@ -509,49 +509,10 @@ export default function HomePage() {
         : null;
     const totalEur = computedTotalPriceEur;
 
-    // If the guest booked only the Open Wheelchair Space (no numbered seat), record directly without requiring a seat number
-    if (selectedSeats.length === 0 && wheelchairSpaces > 0) {
-      const openSpaceRef = `FH-${Math.random().toString(36).slice(2, 10).toUpperCase()}`;
-      const openSpaceBooking = {
-        booking_ref: openSpaceRef,
-        customer_name: customer.name,
-        customer_email: customer.email.trim().toLowerCase(),
-        movie_title: selectedMovie.title,
-        starts_at: selectedScreening.starts_at,
-        auditorium: selectedScreening.auditorium,
-        seats: combinedBookingItems,
-        total_price: Number(totalEur),
-        status: paymentMode === 'online' ? 'paid' : 'confirmed',
-        payment_status: paymentMode === 'online' ? 'paid' : 'PAY_AT_COUNTER',
-        transaction_id: transactionId,
-        stripe_session_id: sessionId,
-        stripe_payment_intent_id: transactionId,
-        webhook_event: webhookEvent || (paymentMode === 'online' ? 'checkout.session.completed' : null)
-      };
-      const stored = JSON.parse(localStorage.getItem('flimhall-demo-bookings') || '[]');
-      localStorage.setItem('flimhall-demo-bookings', JSON.stringify([openSpaceBooking, ...stored]));
-      setBookingResult({
-        booking: openSpaceBooking,
-        emailStatus: 'sent',
-        paymentMode,
-        transactionId,
-        stripeSessionId: sessionId,
-        webhookEvent: openSpaceBooking.webhook_event,
-        paymentStatus: paymentMode === 'online' ? 'paid' : 'UNPAID'
-      });
-      setSelectedSeats([]);
-      setWheelchairSpaces(0);
-      setShowPaymentModal(false);
-      setStripeSession(null);
-      setStripeDeclineError('');
-      setNotice(
-        paymentMode === 'online'
-          ? `✓ Stripe Webhook checkout.session.completed verified (€${totalEur} · ${sessionId})! Open Wheelchair Space booking ${openSpaceRef} is now PAID.`
-          : `Open Wheelchair Space reservation confirmed (${openSpaceRef})! Please collect and pay at least 2 hours before showtime.`
-      );
-      setError('');
-      return;
-    }
+    const seatsForApi =
+      selectedSeats.length > 0
+        ? selectedSeats
+        : Array.from({ length: Math.max(1, wheelchairSpaces) }, (_, idx) => `W${idx + 1}`);
 
     try {
       const result = await apiRequest('/bookings', {
@@ -560,7 +521,12 @@ export default function HomePage() {
           name: customer.name,
           email: customer.email,
           screeningId: selectedScreening.id,
-          seats: selectedSeats
+          seats: seatsForApi,
+          totalPrice: Number(totalEur),
+          paymentStatus: paymentMode === 'online' ? 'paid' : 'PAY_AT_COUNTER',
+          transactionId,
+          movie: selectedMovie,
+          screening: selectedScreening
         }
       });
       const enrichedBooking = {
