@@ -1,7 +1,7 @@
 // FlimHall Auditorium Seat & Showtime Rules:
 // - 10 seats per row, snake numbering from the front screen
 // - Skip Row 13 and Seat #13
-// - Row 1 reserved for wheelchair access
+// - Open wheelchair accessible space is located in front of Row 1 (Row 1 is a normal numbered row)
 // - Detect 1-seat gaps ("orphan seats") between selected/booked seats
 // - Auditorium doors open 15 minutes before ads; 12 minutes of ads before film starts
 
@@ -27,7 +27,6 @@ export function buildAuditoriumRows(seats = []) {
   return sortedRowLetters.map((rowLetter, rowIndex) => {
     const rawRowNumber = rowIndex + 1;
     const displayRow = skipNumber13(rawRowNumber);
-    const isWheelchairRow = rawRowNumber === 1;
     const rowSeats = rowGroups.get(rowLetter).sort((a, b) => a.colNum - b.colNum);
 
     // Snake numbering from screen: odd rows L->R, even rows R<-L
@@ -45,7 +44,7 @@ export function buildAuditoriumRows(seats = []) {
       ...s,
       displayRow,
       snakeNumber: snakeMap.get(s.label),
-      isWheelchair: isWheelchairRow,
+      isWheelchair: false,
       direction: isReverseRow ? 'R ← L' : 'L → R'
     }));
 
@@ -53,7 +52,7 @@ export function buildAuditoriumRows(seats = []) {
       rowIndex,
       rowLetter,
       displayRow,
-      isWheelchairRow,
+      isWheelchairRow: false,
       direction: isReverseRow ? 'R ← L' : 'L → R',
       seats: enrichedSeats
     };
@@ -130,5 +129,113 @@ export function getShowtimeSchedule(startsAtIso) {
     doorsOpenTime: fmt(doorsOpen),
     adsStartTime: fmt(adsStart),
     filmStartTime: fmt(filmStart)
+  };
+}
+
+export function suggestBestSeats(rows = [], partySize = 2) {
+  if (!rows.length || partySize < 1) return [];
+  const idealRowIndex = Math.floor(rows.length * 0.45);
+  const rankedRows = [...rows].sort(
+    (a, b) => Math.abs(a.rowIndex - idealRowIndex) - Math.abs(b.rowIndex - idealRowIndex)
+  );
+
+  for (const row of rankedRows) {
+    const avail = row.seats.filter((s) => s.available);
+    if (avail.length < partySize) continue;
+    let bestBlock = null;
+    let bestScore = Infinity;
+
+    for (let i = 0; i <= avail.length - partySize; i += 1) {
+      const block = avail.slice(i, i + partySize);
+      const consecutive = block.every(
+        (s, idx) => idx === 0 || s.colNum === block[idx - 1].colNum + 1
+      );
+      if (!consecutive) continue;
+      const labels = block.map((s) => s.label);
+      if (detectSingleSeatGaps(rows, labels).length > 0) continue;
+
+      const avgCol = block.reduce((sum, s) => sum + s.colNum, 0) / partySize;
+      const centerDist = Math.abs(avgCol - 5.5);
+      if (centerDist < bestScore) {
+        bestScore = centerDist;
+        bestBlock = labels;
+      }
+    }
+
+    if (bestBlock) return bestBlock;
+  }
+
+  const allAvail = rows.flatMap((r) => r.seats.filter((s) => s.available));
+  return allAvail.slice(0, partySize).map((s) => s.label);
+}
+
+export function analyzeSeatSeparation(rows = [], selectedLabels = []) {
+  if (!rows.length || selectedLabels.length < 2) {
+    return {
+      isSeparated: false,
+      distinctRowsCount: selectedLabels.length ? 1 : 0,
+      reason: '',
+      suggestedSeats: [],
+      suggestedRowNumber: null
+    };
+  }
+
+  const selectedSet = new Set(selectedLabels);
+  const selectedSeatObjects = [];
+  rows.forEach((row) => {
+    row.seats.forEach((seat) => {
+      if (selectedSet.has(seat.label)) {
+        selectedSeatObjects.push(seat);
+      }
+    });
+  });
+
+  if (selectedSeatObjects.length < 2) {
+    return {
+      isSeparated: false,
+      distinctRowsCount: 1,
+      reason: '',
+      suggestedSeats: [],
+      suggestedRowNumber: null
+    };
+  }
+
+  const distinctRows = new Set(selectedSeatObjects.map((s) => s.displayRow));
+  const distinctRowsCount = distinctRows.size;
+
+  let isContiguousSameRow = false;
+  if (distinctRowsCount === 1) {
+    const sortedByCol = [...selectedSeatObjects].sort((a, b) => a.colNum - b.colNum);
+    isContiguousSameRow = sortedByCol.every(
+      (s, idx) => idx === 0 || s.colNum === sortedByCol[idx - 1].colNum + 1
+    );
+  }
+
+  if (isContiguousSameRow) {
+    return {
+      isSeparated: false,
+      distinctRowsCount: 1,
+      reason: '',
+      suggestedSeats: [],
+      suggestedRowNumber: null
+    };
+  }
+
+  const suggestedSeats = suggestBestSeats(rows, selectedLabels.length);
+  const firstSuggested = rows
+    .flatMap((r) => r.seats)
+    .find((s) => s.label === suggestedSeats[0]);
+
+  const reason =
+    distinctRowsCount > 1
+      ? `You selected ${selectedLabels.length} seats across ${distinctRowsCount} different rows (${selectedLabels.join(', ')}).`
+      : `Your ${selectedLabels.length} selected seats (${selectedLabels.join(', ')}) are separated in Row ${selectedSeatObjects[0].displayRow} and not side-by-side.`;
+
+  return {
+    isSeparated: true,
+    distinctRowsCount,
+    reason,
+    suggestedSeats,
+    suggestedRowNumber: firstSuggested?.displayRow || null
   };
 }
