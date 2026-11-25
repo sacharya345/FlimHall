@@ -16,7 +16,7 @@ export const dbConfig = {
         password: process.env.DB_PASSWORD || 'postgres'
       }),
 
-  ssl: useSSL ? { rejectUnauthorized: true } : false,
+  ssl: useSSL ? { rejectUnauthorized: false } : false,
 
   max: 10,
   idleTimeoutMillis: 30000,
