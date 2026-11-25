@@ -1,10 +1,11 @@
 import { randomBytes } from 'node:crypto';
 import pool from '../db.js';
-import { sendBookingConfirmation } from '../services/emailService.js';
+import {
+  sendBookingConfirmation,
+  sendBookingNotification
+} from '../services/emailService.js';
 import { httpError } from '../utils/httpError.js';
-
 let bookingSchemaEnsured = false;
-
 async function ensureBookingSchema() {
   if (bookingSchemaEnsured) return;
   await pool.query(`
@@ -13,11 +14,9 @@ async function ensureBookingSchema() {
   `);
   bookingSchemaEnsured = true;
 }
-
 function createBookingReference() {
   return `FH-${randomBytes(5).toString('hex').toUpperCase()}`;
 }
-
 async function resolveOrCreateScreening(client, { screeningId, movieInput, screeningInput }) {
   if (Number.isSafeInteger(screeningId) && screeningId >= 1) {
     const { rows } = await client.query(
@@ -37,7 +36,6 @@ async function resolveOrCreateScreening(client, { screeningId, movieInput, scree
       }
     }
   }
-
   // Auto-provision movie, auditorium, and screening when booking a frontend catalog showtime
   const title = String(movieInput?.title || 'FlimHall Feature').trim().slice(0, 180);
   const description = String(movieInput?.description || '').trim().slice(0, 5000);
@@ -52,7 +50,6 @@ async function resolveOrCreateScreening(client, { screeningId, movieInput, scree
     ? Number(movieInput.release_year)
     : 2024;
   const posterUrl = String(movieInput?.poster_url || '').trim() || null;
-
   const { rows: movieRows } = await client.query(
     `INSERT INTO movies (title, description, genre, duration_min, age_rating, release_year, poster_url)
      VALUES ($1, $2, $3, $4, $5, $6, $7)
@@ -62,12 +59,10 @@ async function resolveOrCreateScreening(client, { screeningId, movieInput, scree
     [title, description, genre, durationMin, ageRating, releaseYear, posterUrl]
   );
   const movie = movieRows[0];
-
   const auditoriumName = String(screeningInput?.auditorium || 'Oulu — Auditorium 1 (100 seats)').trim();
   const is200 = auditoriumName.includes('200') || auditoriumName.includes('Auditorium 2') || auditoriumName.includes('Screen 2');
   const seatRows = is200 ? 21 : 10;
   const seatCols = 10;
-
   const { rows: audRows } = await client.query(
     `INSERT INTO auditoriums (name, seat_rows, seat_columns)
      VALUES ($1, $2, $3)
@@ -77,13 +72,11 @@ async function resolveOrCreateScreening(client, { screeningId, movieInput, scree
     [auditoriumName, seatRows, seatCols]
   );
   const auditorium = audRows[0];
-
   const parsedStart = screeningInput?.starts_at ? new Date(screeningInput.starts_at) : null;
   const startsAt = parsedStart && Number.isFinite(parsedStart.getTime()) && parsedStart > new Date()
     ? parsedStart.toISOString()
     : new Date(Date.now() + 2 * 3600_000).toISOString();
   const basePrice = Number(screeningInput?.base_price) > 0 ? Number(screeningInput.base_price) : 14.0;
-
   const { rows: existingScr } = await client.query(
     `SELECT s.id, s.starts_at, s.base_price, s.status
      FROM screenings s
@@ -92,7 +85,6 @@ async function resolveOrCreateScreening(client, { screeningId, movieInput, scree
      LIMIT 1 FOR UPDATE OF s`,
     [movie.id, auditorium.id, startsAt]
   );
-
   if (existingScr[0]) {
     return {
       ...existingScr[0],
@@ -102,14 +94,12 @@ async function resolveOrCreateScreening(client, { screeningId, movieInput, scree
       auditorium: auditorium.name
     };
   }
-
   const { rows: createdScr } = await client.query(
     `INSERT INTO screenings (movie_id, auditorium_id, starts_at, base_price, status)
      VALUES ($1, $2, $3, $4, 'scheduled')
      RETURNING id, starts_at, base_price, status`,
     [movie.id, auditorium.id, startsAt, basePrice]
   );
-
   return {
     ...createdScr[0],
     movie_title: movie.title,
@@ -118,7 +108,6 @@ async function resolveOrCreateScreening(client, { screeningId, movieInput, scree
     auditorium: auditorium.name
   };
 }
-
 export async function createBooking(req, res) {
   await ensureBookingSchema();
   const body = req.body && typeof req.body === 'object' ? req.body : {};
@@ -130,7 +119,6 @@ export async function createBooking(req, res) {
   const paymentStatus = String(body.paymentStatus || 'paid').trim();
   const transactionId = body.transactionId ? String(body.transactionId).trim() : null;
   const customTotalPrice = Number(body.totalPrice);
-
   if (!customerName || customerName.length > 120 || customerEmail.length > 254
     || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customerEmail)) {
     throw httpError(400, 'A name and valid email address are required.');
@@ -139,24 +127,20 @@ export async function createBooking(req, res) {
     || seats.some((seat) => !/^[A-Z]\d{1,2}$/.test(seat))) {
     throw httpError(400, 'Choose between 1 and 12 valid seats.');
   }
-
   const client = await pool.connect();
   let booking;
   let transactionStarted = false;
   try {
     await client.query('BEGIN');
     transactionStarted = true;
-
     const screening = await resolveOrCreateScreening(client, {
       screeningId,
       movieInput: body.movie,
       screeningInput: body.screening
     });
-
     if (!screening || screening.status !== 'scheduled' || new Date(screening.starts_at) <= new Date()) {
       throw httpError(409, 'This screening is no longer available.');
     }
-
     const maxRowIndex = Math.max(Number(screening.seat_rows) || 10, 21);
     const maxColIndex = Math.max(Number(screening.seat_columns) || 10, 12);
     const validSeats = new Set(['W1', 'W2', 'W3', 'W4']);
@@ -168,7 +152,6 @@ export async function createBooking(req, res) {
     if (seats.some((seat) => !validSeats.has(seat))) {
       throw httpError(400, 'One or more selected seats do not exist.');
     }
-
     const { rows: occupiedRows } = await client.query(
       `SELECT bs.seat_label FROM booking_seats bs
        JOIN bookings b ON b.id = bs.booking_id
@@ -178,13 +161,11 @@ export async function createBooking(req, res) {
     if (occupiedRows.length) {
       throw httpError(409, `These seats are no longer available: ${occupiedRows.map((row) => row.seat_label).join(', ')}.`);
     }
-
     const totalPrice = Number.isFinite(customTotalPrice) && customTotalPrice >= 0
       ? customTotalPrice.toFixed(2)
       : (Number(screening.base_price) * seats.length).toFixed(2);
     const unitSeatPrice = (Number(totalPrice) / seats.length).toFixed(2);
     const bookingRef = createBookingReference();
-
     const { rows: bookingRows } = await client.query(
       `INSERT INTO bookings (booking_ref, customer_name, customer_email, screening_id, total_price, payment_status, transaction_id)
        VALUES ($1, $2, $3, $4, $5, $6, $7)
@@ -193,7 +174,6 @@ export async function createBooking(req, res) {
       [bookingRef, customerName, customerEmail, screening.id, totalPrice, paymentStatus, transactionId]
     );
     booking = bookingRows[0];
-
     for (const seat of seats) {
       await client.query(
         'INSERT INTO booking_seats (booking_id, screening_id, seat_label, price) VALUES ($1, $2, $3, $4)',
@@ -202,7 +182,6 @@ export async function createBooking(req, res) {
     }
     await client.query('COMMIT');
     transactionStarted = false;
-
     const responseBooking = {
       ...booking,
       movie_title: screening.movie_title,
@@ -218,6 +197,21 @@ export async function createBooking(req, res) {
       console.error(`Booking email failed for ${booking.booking_ref}:`, error);
       emailStatus = process.env.SMTP_HOST ? 'failed' : 'not_configured';
     }
+    // Send administrator notification independently of customer email.
+  // Send administrator notification independently of customer email.
+try {
+  console.log('Sending administrator notification...');
+  console.log('Admin recipient:', process.env.BOOKING_ALERT_EMAIL);
+
+  await sendBookingNotification(responseBooking);
+
+  console.log('Admin notification sent successfully');
+} catch (error) {
+  console.error(
+    `Admin notification failed for ${booking.booking_ref}:`,
+    error
+  );
+}
 
     return res.status(201).json({
       booking: responseBooking,
@@ -239,7 +233,6 @@ export async function createBooking(req, res) {
     client.release();
   }
 }
-
 export async function retrieveBooking(req, res) {
   await ensureBookingSchema();
   const reference = String(req.params.reference || '').trim().toUpperCase();
