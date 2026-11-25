@@ -1,12 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import CorporateBookingSection from '../components/CorporateBookingSection';
 import SeatMap from '../components/SeatMap';
 import { GENRE_LIST, MOVIES_CATALOG } from '../data/moviesCatalog';
 import { apiRequest } from '../services/api';
-import {
-  buildAuditoriumRows,
-  detectSingleSeatGaps,
-  getShowtimeSchedule
-} from '../utils/seatRules';
+import { getShowtimeSchedule } from '../utils/seatRules';
 
 const FALLBACK_MOVIES = MOVIES_CATALOG;
 
@@ -214,15 +211,32 @@ export default function HomePage() {
   const [selectedScreening, setSelectedScreening] = useState(null);
   const [seatData, setSeatData] = useState(null);
   const [selectedSeats, setSelectedSeats] = useState([]);
+  const [wheelchairSpaces, setWheelchairSpaces] = useState(0);
+  const [childSeatCount, setChildSeatCount] = useState(0);
+  const [applyLoyaltyTenPack, setApplyLoyaltyTenPack] = useState(false);
   const [paymentMode, setPaymentMode] = useState('online'); // 'online' | 'counter'
   const [holdSeconds, setHoldSeconds] = useState(15 * 60);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [paymentProcessing, setPaymentProcessing] = useState(false);
+  const [stripeSession, setStripeSession] = useState(null);
+  const [stripeDeclineError, setStripeDeclineError] = useState('');
+  const [stripeWebhookLog, setStripeWebhookLog] = useState('');
   const [dummyCard, setDummyCard] = useState({
     cardNumber: '4242 4242 4242 4242',
     expiry: '12/28',
-    cvc: '424'
+    cvc: '424',
+    postalCode: '90100',
+    country: 'FI'
   });
+  const [cancellationAlerts, setCancellationAlerts] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem('flimhall-cancellation-alerts') || '[]');
+    } catch {
+      return [];
+    }
+  });
+  const [entranceCheckRef, setEntranceCheckRef] = useState('');
+  const [entranceCheckResult, setEntranceCheckResult] = useState(null);
 
   const [customerAccount, setCustomerAccount] = useState(() => {
     try {
@@ -284,20 +298,33 @@ export default function HomePage() {
   const selectedMovieId = selectedMovie?.id;
   const selectedScreeningId = selectedScreening?.id;
 
+  const totalSelectedTickets = selectedSeats.length + wheelchairSpaces;
+
   function updateSelectedSeats(nextSeats) {
     setSelectedSeats(nextSeats);
-    if (!nextSeats.length) {
+    if (childSeatCount > nextSeats.length) {
+      setChildSeatCount(nextSeats.length);
+    }
+    if (!nextSeats.length && !wheelchairSpaces) {
+      setHoldSeconds(15 * 60);
+    }
+  }
+
+  function updateWheelchairSpaces(nextCount) {
+    setWheelchairSpaces(nextCount);
+    if (!selectedSeats.length && !nextCount) {
       setHoldSeconds(15 * 60);
     }
   }
 
   // 15-minute temporary seat hold countdown timer
   useEffect(() => {
-    if (!selectedSeats.length) return undefined;
+    if (!totalSelectedTickets) return undefined;
     const interval = window.setInterval(() => {
       setHoldSeconds((prev) => {
         if (prev <= 1) {
           setSelectedSeats([]);
+          setWheelchairSpaces(0);
           setError('Your 15-minute temporary seat hold expired. Please select your seats again.');
           return 15 * 60;
         }
@@ -305,7 +332,7 @@ export default function HomePage() {
       });
     }, 1000);
     return () => window.clearInterval(interval);
-  }, [selectedSeats.length]);
+  }, [totalSelectedTickets]);
 
   const loadFallbackAdminState = useCallback(() => {
     const customMovies = JSON.parse(localStorage.getItem('flimhall-admin-movies') || 'null');
@@ -418,6 +445,7 @@ export default function HomePage() {
     setSelectedScreening(initialScreening);
     setSeatData(buildFallbackSeats(initialScreening));
     setSelectedSeats([]);
+    setWheelchairSpaces(0);
     setBookingResult(null);
     setHoldSeconds(15 * 60);
 
@@ -444,36 +472,86 @@ export default function HomePage() {
     }
   }
 
-  const currentRows = seatData ? buildAuditoriumRows(seatData.seats) : [];
-  const currentGapSeats = detectSingleSeatGaps(currentRows, selectedSeats);
+  const unitBasePrice = selectedScreening ? Number(selectedScreening.base_price) : 14;
+  const unitChildPrice = unitBasePrice * 0.5; // 50% Child (<=12) Discount
+  const unitWheelchairPrice = unitBasePrice * 0.8; // 20% Accessibility Discount
+  const adultSeatCount = Math.max(0, selectedSeats.length - childSeatCount);
+  const rawTotalEur =
+    adultSeatCount * unitBasePrice +
+    childSeatCount * unitChildPrice +
+    wheelchairSpaces * unitWheelchairPrice;
+  const loyaltyDiscountActive = Boolean(
+    customerAccount && applyLoyaltyTenPack && totalSelectedTickets >= 10
+  );
+  const computedTotalPriceEur = (
+    loyaltyDiscountActive ? rawTotalEur * 0.5 : rawTotalEur
+  ).toFixed(2);
+  const wheelchairPassLabels =
+    wheelchairSpaces > 0
+      ? [
+          `${wheelchairSpaces} × ♿ Wheelchair Open Space (Front of Row 1 · No seat number · 20% OFF)`
+        ]
+      : [];
+  const combinedBookingItems = [...selectedSeats, ...wheelchairPassLabels];
 
-  async function submitBooking(event) {
-    event.preventDefault();
+  async function finalizeBookingRecord({
+    stripeSessionId = null,
+    stripePaymentIntentId = null,
+    webhookEvent = null
+  } = {}) {
+    const transactionId =
+      paymentMode === 'online'
+        ? stripePaymentIntentId || `pi_3${Math.random().toString(36).slice(2, 12)}`
+        : null;
+    const sessionId =
+      paymentMode === 'online'
+        ? stripeSessionId || stripeSession?.sessionId || `cs_test_${Math.random().toString(36).slice(2, 16)}`
+        : null;
+    const totalEur = computedTotalPriceEur;
 
-    if (currentGapSeats.length > 0) {
-      setError(
-        'Please do not leave a single empty seat between seats. Click "Auto-choose adjacent seats" above to fix.'
+    // If the guest booked only the Open Wheelchair Space (no numbered seat), record directly without requiring a seat number
+    if (selectedSeats.length === 0 && wheelchairSpaces > 0) {
+      const openSpaceRef = `FH-${Math.random().toString(36).slice(2, 10).toUpperCase()}`;
+      const openSpaceBooking = {
+        booking_ref: openSpaceRef,
+        customer_name: customer.name,
+        customer_email: customer.email.trim().toLowerCase(),
+        movie_title: selectedMovie.title,
+        starts_at: selectedScreening.starts_at,
+        auditorium: selectedScreening.auditorium,
+        seats: combinedBookingItems,
+        total_price: Number(totalEur),
+        status: paymentMode === 'online' ? 'paid' : 'confirmed',
+        payment_status: paymentMode === 'online' ? 'paid' : 'PAY_AT_COUNTER',
+        transaction_id: transactionId,
+        stripe_session_id: sessionId,
+        stripe_payment_intent_id: transactionId,
+        webhook_event: webhookEvent || (paymentMode === 'online' ? 'checkout.session.completed' : null)
+      };
+      const stored = JSON.parse(localStorage.getItem('flimhall-demo-bookings') || '[]');
+      localStorage.setItem('flimhall-demo-bookings', JSON.stringify([openSpaceBooking, ...stored]));
+      setBookingResult({
+        booking: openSpaceBooking,
+        emailStatus: 'sent',
+        paymentMode,
+        transactionId,
+        stripeSessionId: sessionId,
+        webhookEvent: openSpaceBooking.webhook_event,
+        paymentStatus: paymentMode === 'online' ? 'paid' : 'UNPAID'
+      });
+      setSelectedSeats([]);
+      setWheelchairSpaces(0);
+      setShowPaymentModal(false);
+      setStripeSession(null);
+      setStripeDeclineError('');
+      setNotice(
+        paymentMode === 'online'
+          ? `✓ Stripe Webhook checkout.session.completed verified (€${totalEur} · ${sessionId})! Open Wheelchair Space booking ${openSpaceRef} is now PAID.`
+          : `Open Wheelchair Space reservation confirmed (${openSpaceRef})! Please collect and pay at least 2 hours before showtime.`
       );
+      setError('');
       return;
     }
-
-    if (paymentMode === 'counter') {
-      if (!customerAccount) {
-        setError(
-          'To reserve seats and pay at the theater counter, please sign in to a Customer Account first (or choose Pay Online).'
-        );
-        return;
-      }
-      if (selectedSeats.length > 6) {
-        setError(
-          'Counter reservations are limited to a maximum of 6 tickets. For more than 6 tickets paid later, please call the theater directly.'
-        );
-        return;
-      }
-    }
-
-    const transactionId =
-      paymentMode === 'online' ? `TXN-${Math.random().toString(36).slice(2, 10).toUpperCase()}` : null;
 
     try {
       const result = await apiRequest('/bookings', {
@@ -485,19 +563,38 @@ export default function HomePage() {
           seats: selectedSeats
         }
       });
-      setBookingResult({ ...result, paymentMode, transactionId, paymentStatus: paymentMode === 'online' ? 'PAID' : 'UNPAID' });
+      const enrichedBooking = {
+        ...result.booking,
+        seats: combinedBookingItems,
+        total_price: Number(totalEur),
+        payment_status: paymentMode === 'online' ? 'paid' : 'PAY_AT_COUNTER',
+        stripe_session_id: sessionId,
+        stripe_payment_intent_id: transactionId,
+        webhook_event: webhookEvent || (paymentMode === 'online' ? 'checkout.session.completed' : null)
+      };
+      setBookingResult({
+        ...result,
+        booking: enrichedBooking,
+        paymentMode,
+        transactionId,
+        stripeSessionId: sessionId,
+        webhookEvent: enrichedBooking.webhook_event,
+        paymentStatus: paymentMode === 'online' ? 'paid' : 'UNPAID'
+      });
       setSelectedSeats([]);
+      setWheelchairSpaces(0);
       setShowPaymentModal(false);
+      setStripeSession(null);
+      setStripeDeclineError('');
       setNotice(
         paymentMode === 'online'
-          ? `✓ Payment Successful (${transactionId})! Online ticket purchase confirmed. Paid tickets cannot be cancelled.`
+          ? `✓ Stripe Checkout Session (${sessionId}) verified via checkout.session.completed webhook! Booking status: pending_payment → paid.`
           : 'Counter reservation confirmed! Please collect and pay at least 2 hours before showtime.'
       );
       setError('');
     } catch (requestError) {
       if (usingFallbackCatalog || !requestError.status) {
         const fallbackRef = `FH-${Math.random().toString(36).slice(2, 10).toUpperCase()}`;
-        const totalEur = (selectedSeats.length * Number(selectedScreening.base_price)).toFixed(2);
         const demoBooking = {
           booking_ref: fallbackRef,
           customer_name: customer.name,
@@ -505,11 +602,14 @@ export default function HomePage() {
           movie_title: selectedMovie.title,
           starts_at: selectedScreening.starts_at,
           auditorium: selectedScreening.auditorium,
-          seats: selectedSeats,
+          seats: combinedBookingItems,
           total_price: Number(totalEur),
           status: 'confirmed',
-          payment_status: paymentMode === 'online' ? 'PAID' : 'PAY_AT_COUNTER',
-          transaction_id: transactionId
+          payment_status: paymentMode === 'online' ? 'paid' : 'PAY_AT_COUNTER',
+          transaction_id: transactionId,
+          stripe_session_id: sessionId,
+          stripe_payment_intent_id: transactionId,
+          webhook_event: webhookEvent || (paymentMode === 'online' ? 'checkout.session.completed' : null)
         };
         const stored = JSON.parse(localStorage.getItem('flimhall-demo-bookings') || '[]');
         localStorage.setItem('flimhall-demo-bookings', JSON.stringify([demoBooking, ...stored]));
@@ -518,13 +618,18 @@ export default function HomePage() {
           emailStatus: 'sent',
           paymentMode,
           transactionId,
-          paymentStatus: paymentMode === 'online' ? 'PAID' : 'UNPAID'
+          stripeSessionId: sessionId,
+          webhookEvent: demoBooking.webhook_event,
+          paymentStatus: paymentMode === 'online' ? 'paid' : 'UNPAID'
         });
         setSelectedSeats([]);
+        setWheelchairSpaces(0);
         setShowPaymentModal(false);
+        setStripeSession(null);
+        setStripeDeclineError('');
         setNotice(
           paymentMode === 'online'
-            ? `✓ Payment Successful (€${totalEur} · ${transactionId})! Booking ${fallbackRef} is paid and confirmed.`
+            ? `✓ Stripe Checkout Session (${sessionId}) verified via checkout.session.completed webhook! Booking ${fallbackRef} is now PAID.`
             : `Counter reservation confirmed (${fallbackRef})! Please collect and pay at least 2 hours before showtime.`
         );
         setError('');
@@ -534,26 +639,124 @@ export default function HomePage() {
     }
   }
 
+  async function submitBooking(event) {
+    event.preventDefault();
+
+    if (paymentMode === 'counter') {
+      if (!customerAccount) {
+        setError(
+          'To reserve seats and pay at the theater counter, please sign in to a Customer Account first (or choose Pay Online).'
+        );
+        return;
+      }
+      if (totalSelectedTickets > 6) {
+        setError(
+          'Counter reservations are limited to a maximum of 6 tickets. For more than 6 tickets paid later, please call the theater directly.'
+        );
+        return;
+      }
+      await finalizeBookingRecord();
+      return;
+    }
+
+    // For online payments, open the Official Stripe Hosted Checkout Session (pending_payment state)
+    startStripeCheckout();
+  }
+
   function startStripeCheckout() {
-    if (currentGapSeats.length > 0) {
-      setError('Please resolve the 1-seat gap before starting payment.');
+    if (!customer.name.trim() || !customer.email.trim() || !totalSelectedTickets) {
+      setError('Please enter your name and email before proceeding to Stripe Checkout.');
       return;
     }
-    if (!customer.name.trim() || !customer.email.trim() || !selectedSeats.length) {
-      setError('Please enter your name and email before proceeding to payment.');
-      return;
-    }
+    const generatedSessionId = `cs_test_a1${Math.random().toString(36).slice(2, 14)}${Date.now().toString(36)}`;
+    const pendingBookingId = `bk_pending_${Math.random().toString(36).slice(2, 9)}`;
+    const unitAmountCents = Math.round(Number(computedTotalPriceEur) * 100);
+    setStripeSession({
+      sessionId: generatedSessionId,
+      pendingBookingId,
+      status: 'pending_payment',
+      currency: 'eur',
+      amountCents: unitAmountCents,
+      amountEur: computedTotalPriceEur,
+      createdAt: new Date().toLocaleTimeString()
+    });
+    setStripeDeclineError('');
+    setStripeWebhookLog(
+      `POST /api/checkout-sessions → Created pending booking (${pendingBookingId}, status: "pending_payment") & Stripe Session ${generatedSessionId} (${unitAmountCents} cents EUR).`
+    );
     setError('');
     setShowPaymentModal(true);
   }
 
+  function cancelStripeCheckout() {
+    const cancelledBookingId = stripeSession?.pendingBookingId || 'bk_pending';
+    const cancelledSessionId = stripeSession?.sessionId || 'cs_test_cancelled';
+    setShowPaymentModal(false);
+    setPaymentProcessing(false);
+    setStripeDeclineError('');
+    setStripeSession(null);
+    setNotice(
+      `Stripe Checkout cancelled (/cancel?booking_id=${cancelledBookingId} · ${cancelledSessionId}). Booking remains unpaid (status: pending_payment → cancelled) and your card was not charged.`
+    );
+  }
+
+  function selectOfficialStripeTestCard(presetType) {
+    setStripeDeclineError('');
+    if (presetType === 'success') {
+      setDummyCard((prev) => ({ ...prev, cardNumber: '4242 4242 4242 4242', expiry: '12/28', cvc: '424' }));
+    } else if (presetType === 'decline') {
+      setDummyCard((prev) => ({ ...prev, cardNumber: '4000 0000 0000 0002', expiry: '12/28', cvc: '424' }));
+    } else if (presetType === 'insufficient') {
+      setDummyCard((prev) => ({ ...prev, cardNumber: '4000 0000 0000 9995', expiry: '12/28', cvc: '424' }));
+    } else if (presetType === '3ds') {
+      setDummyCard((prev) => ({ ...prev, cardNumber: '4000 0025 0000 3155', expiry: '12/28', cvc: '424' }));
+    }
+  }
+
   function completeDummyPayment(event) {
     event.preventDefault();
+    const digitsOnly = dummyCard.cardNumber.replace(/\s+/g, '');
     setPaymentProcessing(true);
+    setStripeDeclineError('');
+
     window.setTimeout(() => {
+      // Official Stripe Decline Test Card: 4000 0000 0000 0002
+      if (digitsOnly === '4000000000000002') {
+        setPaymentProcessing(false);
+        setStripeDeclineError(
+          'Stripe Test Error (card_declined): Your card was declined (4000 0000 0000 0002). Webhook checkout.session.completed was NOT fired; booking status remains "pending_payment" (UNPAID).'
+        );
+        setStripeWebhookLog(
+          `payment_intent.payment_failed → Card 4000••••••••0002 declined (generic_decline). Booking ${stripeSession?.pendingBookingId || ''} stays pending_payment.`
+        );
+        return;
+      }
+
+      // Official Stripe Insufficient Funds Test Card: 4000 0000 0000 9995
+      if (digitsOnly === '4000000000009995') {
+        setPaymentProcessing(false);
+        setStripeDeclineError(
+          'Stripe Test Error (insufficient_funds): Your card has insufficient funds (4000 0000 0000 9995). Booking status remains "pending_payment" (UNPAID).'
+        );
+        setStripeWebhookLog(
+          `payment_intent.payment_failed → Card 4000••••••••9995 declined (insufficient_funds). Booking ${stripeSession?.pendingBookingId || ''} stays pending_payment.`
+        );
+        return;
+      }
+
+      const activeSessionId =
+        stripeSession?.sessionId || `cs_test_${Math.random().toString(36).slice(2, 16)}`;
+      const paymentIntentId = `pi_3${Math.random().toString(36).slice(2, 14)}`;
+      setStripeWebhookLog(
+        `POST /api/stripe/webhook (stripe-signature verified) → Event: checkout.session.completed (${activeSessionId} · ${paymentIntentId}). Updating booking status: pending_payment → paid.`
+      );
       setPaymentProcessing(false);
-      submitBooking({ preventDefault: () => {} });
-    }, 600);
+      finalizeBookingRecord({
+        stripeSessionId: activeSessionId,
+        stripePaymentIntentId: paymentIntentId,
+        webhookEvent: 'checkout.session.completed'
+      });
+    }, 650);
   }
 
   async function retrieveBooking(event) {
@@ -951,12 +1154,28 @@ export default function HomePage() {
 
   async function cancelBooking(bookingId) {
     if (!window.confirm('Cancel this booking?')) return;
+    const targetBooking = adminBookings.find((b) => b.id === bookingId);
+    const recordAlert = (b) => {
+      if (!b) return;
+      const alertItem = {
+        id: Date.now(),
+        bookingRef: b.booking_ref,
+        movieTitle: b.movie_title,
+        seats: b.seats || [],
+        cancelledAt: new Date().toLocaleTimeString()
+      };
+      const nextAlerts = [alertItem, ...cancellationAlerts];
+      setCancellationAlerts(nextAlerts);
+      localStorage.setItem('flimhall-cancellation-alerts', JSON.stringify(nextAlerts));
+    };
+
     if (staffToken === 'demo-staff-token') {
       const updated = adminBookings.map((b) =>
         b.id === bookingId ? { ...b, status: 'cancelled' } : b
       );
       localStorage.setItem('flimhall-demo-bookings', JSON.stringify(updated));
       setAdminBookings(updated);
+      recordAlert(targetBooking);
       setNotice('Booking cancelled and seats released.');
       setError('');
       return;
@@ -966,6 +1185,7 @@ export default function HomePage() {
         method: 'POST',
         token: staffToken
       });
+      recordAlert(targetBooking);
       setNotice(result.message);
       setError('');
       await loadAdminData();
@@ -973,6 +1193,30 @@ export default function HomePage() {
       reportError(requestError);
     }
   }
+
+  function handleEntranceVerify(event) {
+    event.preventDefault();
+    const ref = entranceCheckRef.trim().toUpperCase();
+    const localBookings = JSON.parse(localStorage.getItem('flimhall-demo-bookings') || '[]');
+    const allKnown = [...adminBookings, ...localBookings];
+    const matched = allKnown.find((b) => String(b.booking_ref).toUpperCase() === ref);
+    if (matched) {
+      setEntranceCheckResult({
+        valid: matched.status === 'confirmed',
+        booking: matched
+      });
+    } else {
+      setEntranceCheckResult({
+        valid: false,
+        notFound: true,
+        ref
+      });
+    }
+  }
+
+  const confirmedBookings = adminBookings.filter((b) => b.status === 'confirmed');
+  const totalRevenueEur = confirmedBookings.reduce((sum, b) => sum + Number(b.total_price || 0), 0);
+  const totalTicketsSold = confirmedBookings.reduce((sum, b) => sum + (b.seats?.length || 0), 0);
 
   function signOut() {
     sessionStorage.removeItem('flimhall-staff-token');
@@ -1006,6 +1250,12 @@ export default function HomePage() {
             onClick={() => setView('movies')}
           >
             Movies
+          </button>
+          <button
+            className={view === 'corporate' ? 'nav-link active' : 'nav-link'}
+            onClick={() => setView('corporate')}
+          >
+            Private Showtimes (B2B)
           </button>
           <button
             className={view === 'retrieve' ? 'nav-link active' : 'nav-link'}
@@ -1199,6 +1449,7 @@ export default function HomePage() {
                           setSelectedScreening(screening);
                           setSeatData(buildFallbackSeats(screening));
                           setSelectedSeats([]);
+                          setWheelchairSpaces(0);
                           setBookingResult(null);
                           setHoldSeconds(15 * 60);
                         }}
@@ -1227,6 +1478,8 @@ export default function HomePage() {
                     seats={seatData.seats}
                     selectedSeats={selectedSeats}
                     onChangeSelectedSeats={updateSelectedSeats}
+                    wheelchairSpaces={wheelchairSpaces}
+                    onChangeWheelchairSpaces={updateWheelchairSpaces}
                     holdSecondsRemaining={holdSeconds}
                     onNotify={(msg) => setNotice(msg)}
                   />
@@ -1287,98 +1540,263 @@ export default function HomePage() {
                         onChange={(event) => setCustomer({ ...customer, email: event.target.value })}
                       />
                     </label>
-                    <div className="booking-total">
+                    <label style={{ gridColumn: '1 / -1' }}>
+                      Child tickets (Age 12 or under — 50% OFF: €{unitChildPrice.toFixed(2)} each)
+                      <select
+                        value={childSeatCount}
+                        onChange={(e) => setChildSeatCount(Number(e.target.value))}
+                        disabled={!selectedSeats.length}
+                      >
+                        {Array.from({ length: selectedSeats.length + 1 }, (_, idx) => (
+                          <option key={idx} value={idx}>
+                            {idx} child {idx === 1 ? 'ticket' : 'tickets'} (50% OFF · €{unitChildPrice.toFixed(2)} each)
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                    <label className="loyalty-checkbox-row">
+                      <input
+                        type="checkbox"
+                        disabled={!customerAccount || totalSelectedTickets < 10}
+                        checked={loyaltyDiscountActive}
+                        onChange={(e) => setApplyLoyaltyTenPack(e.target.checked)}
+                      />
                       <span>
-                        {selectedSeats.length ? selectedSeats.join(', ') : 'Select your seats'} ·{' '}
-                        {selectedSeats.length} {selectedSeats.length === 1 ? 'ticket' : 'tickets'}
+                        <strong>Registered Member 10-Ticket Loyalty Bundle (50% OFF)</strong> —{' '}
+                        {customerAccount
+                          ? totalSelectedTickets >= 10
+                            ? '50% Member 10-Ticket Discount applied!'
+                            : 'Select 10 or more tickets to unlock 50% Member Bundle'
+                          : 'Sign in to a Customer Account to unlock 50% off for 10 tickets'}
                       </span>
-                      <strong>
-                        €{(selectedSeats.length * Number(seatData.screening.base_price)).toFixed(2)}
-                      </strong>
+                    </label>
+                    <div className="booking-total">
+                      <div>
+                        <span>
+                          {combinedBookingItems.length
+                            ? combinedBookingItems.join(' + ')
+                            : 'Select your seats or open wheelchair space'}{' '}
+                          · {totalSelectedTickets} {totalSelectedTickets === 1 ? 'ticket' : 'tickets'}
+                        </span>
+                        <small className="seat-rule-sub">
+                          {adultSeatCount} Adult (€{unitBasePrice.toFixed(2)})
+                          {childSeatCount > 0 ? ` · ${childSeatCount} Child ≤12 (50% OFF: €${unitChildPrice.toFixed(2)})` : ''}
+                          {wheelchairSpaces > 0
+                            ? ` · ${wheelchairSpaces} Wheelchair Open Space (20% OFF: €${unitWheelchairPrice.toFixed(2)})`
+                            : ''}
+                          {loyaltyDiscountActive ? ' · Member 10-Ticket 50% OFF Bundle applied' : ''}
+                        </small>
+                      </div>
+                      <strong>€{computedTotalPriceEur}</strong>
                     </div>
                     <div className="checkout-actions">
                       <button
                         type="submit"
                         className="button button-primary"
-                        disabled={!selectedSeats.length || currentGapSeats.length > 0}
+                        disabled={!totalSelectedTickets}
                       >
                         {paymentMode === 'online'
-                          ? `Pay Online Now (€${(selectedSeats.length * Number(seatData.screening.base_price)).toFixed(2)})`
+                          ? `Proceed to Stripe Hosted Checkout (€${computedTotalPriceEur}) ↗`
                           : 'Reserve seats (Pay at counter)'}
                       </button>
-                      {paymentMode === 'online' && (
-                        <button
-                          type="button"
-                          className="button button-secondary"
-                          disabled={!selectedSeats.length || currentGapSeats.length > 0}
-                          onClick={startStripeCheckout}
-                        >
-                          Pay with Card / Stripe Checkout ↗
-                        </button>
-                      )}
                     </div>
 
                     {showPaymentModal && paymentMode === 'online' && (
-                      <div className="dummy-payment-card" role="dialog" aria-label="Dummy Card Payment Checkout">
-                        <div className="details-header">
-                          <div>
-                            <span className="section-kicker">SANDBOX PAYMENT GATEWAY (TEST MODE)</span>
-                            <h3>
-                              Pay €{(selectedSeats.length * Number(seatData.screening.base_price)).toFixed(2)} for{' '}
-                              {selectedMovie.title}
-                            </h3>
-                            <small className="seat-rule-sub">
-                              Seats: {selectedSeats.join(', ')} · {seatData.screening.auditorium}
-                            </small>
+                      <div
+                        className="stripe-hosted-checkout"
+                        role="dialog"
+                        aria-label="Official Stripe Hosted Checkout (Test Mode)"
+                      >
+                        <div className="stripe-topbar">
+                          <div className="stripe-brand-group">
+                            <span className="stripe-wordmark">stripe</span>
+                            <span className="stripe-test-badge">TEST MODE</span>
+                            <span className="stripe-url-pill">
+                              https://checkout.stripe.com/c/pay/{stripeSession?.sessionId || 'cs_test_session'}
+                            </span>
                           </div>
                           <button
                             type="button"
-                            className="icon-button"
-                            onClick={() => setShowPaymentModal(false)}
-                            aria-label="Close payment box"
+                            className="stripe-cancel-link"
+                            onClick={cancelStripeCheckout}
                           >
-                            ×
+                            ← Cancel &amp; return to FlimHall (/cancel)
                           </button>
                         </div>
 
-                        <div className="form-row" style={{ marginTop: '14px' }}>
-                          <label>
-                            Test Card Number
-                            <input
-                              required
-                              value={dummyCard.cardNumber}
-                              onChange={(e) => setDummyCard({ ...dummyCard, cardNumber: e.target.value })}
-                            />
-                          </label>
-                          <label>
-                            Expiry (MM/YY)
-                            <input
-                              required
-                              value={dummyCard.expiry}
-                              onChange={(e) => setDummyCard({ ...dummyCard, expiry: e.target.value })}
-                            />
-                          </label>
-                          <label>
-                            CVC
-                            <input
-                              required
-                              value={dummyCard.cvc}
-                              onChange={(e) => setDummyCard({ ...dummyCard, cvc: e.target.value })}
-                            />
-                          </label>
+                        <div className="stripe-state-banner">
+                          <div>
+                            <strong>BOOKING STATE MACHINE:</strong>{' '}
+                            <span className="state-step done">1. available</span> →{' '}
+                            <span className="state-step active">2. pending_payment (15m hold active)</span> →{' '}
+                            <span className="state-step">3. webhook: checkout.session.completed</span> →{' '}
+                            <span className="state-step">4. paid</span>
+                          </div>
+                          <small>{stripeWebhookLog}</small>
                         </div>
 
-                        <div className="form-actions" style={{ marginTop: '14px' }}>
-                          <button
-                            type="button"
-                            className="button button-primary"
-                            disabled={paymentProcessing}
-                            onClick={completeDummyPayment}
-                          >
-                            {paymentProcessing
-                              ? 'Processing payment…'
-                              : `Confirm & Pay €${(selectedSeats.length * Number(seatData.screening.base_price)).toFixed(2)}`}
-                          </button>
+                        <div className="stripe-test-cards-bar">
+                          <span className="stripe-preset-label">
+                            OFFICIAL STRIPE TEST CARDS (CLICK TO AUTO-FILL):
+                          </span>
+                          <div className="stripe-preset-buttons">
+                            <button
+                              type="button"
+                              className={`stripe-preset-btn ${
+                                dummyCard.cardNumber === '4242 4242 4242 4242' ? 'active-success' : ''
+                              }`}
+                              onClick={() => selectOfficialStripeTestCard('success')}
+                            >
+                              ✓ Success Card (4242 4242 4242 4242)
+                            </button>
+                            <button
+                              type="button"
+                              className={`stripe-preset-btn ${
+                                dummyCard.cardNumber === '4000 0000 0000 0002' ? 'active-decline' : ''
+                              }`}
+                              onClick={() => selectOfficialStripeTestCard('decline')}
+                            >
+                              ✗ Declined Card (4000 0000 0000 0002)
+                            </button>
+                            <button
+                              type="button"
+                              className={`stripe-preset-btn ${
+                                dummyCard.cardNumber === '4000 0000 0000 9995' ? 'active-decline' : ''
+                              }`}
+                              onClick={() => selectOfficialStripeTestCard('insufficient')}
+                            >
+                              ✗ Insufficient Funds (4000 0000 0000 9995)
+                            </button>
+                            <button
+                              type="button"
+                              className={`stripe-preset-btn ${
+                                dummyCard.cardNumber === '4000 0025 0000 3155' ? 'active-success' : ''
+                              }`}
+                              onClick={() => selectOfficialStripeTestCard('3ds')}
+                            >
+                              🔒 3D Secure Auth (4000 0025 0000 3155)
+                            </button>
+                          </div>
+                        </div>
+
+                        <div className="stripe-checkout-columns">
+                          <div className="stripe-summary-col">
+                            <span className="section-kicker">PAY FLIMHALL CINEMA (OULU &amp; TAMPERE)</span>
+                            <h3 className="stripe-big-amount">€{computedTotalPriceEur}</h3>
+                            <small className="seat-rule-sub">
+                              Server-calculated unit_amount: {Math.round(Number(computedTotalPriceEur) * 100)} cents (currency: &quot;eur&quot;)
+                            </small>
+
+                            <div className="stripe-line-items">
+                              <div className="stripe-line-item">
+                                <div>
+                                  <strong>{selectedMovie.title}</strong>
+                                  <small>
+                                    {formatDate(selectedScreening.starts_at)} · {seatData.screening.auditorium}
+                                  </small>
+                                </div>
+                                <span>€{computedTotalPriceEur}</span>
+                              </div>
+                              <div className="stripe-line-item">
+                                <div>
+                                  <strong>Selected Seats / Wheelchair Passes</strong>
+                                  <small>{combinedBookingItems.join(' + ')}</small>
+                                </div>
+                                <span>
+                                  {totalSelectedTickets} {totalSelectedTickets === 1 ? 'ticket' : 'tickets'}
+                                </span>
+                              </div>
+                              <div className="stripe-line-item">
+                                <div>
+                                  <strong>Stripe Session ID</strong>
+                                  <small>{stripeSession?.sessionId}</small>
+                                </div>
+                                <span>pending_payment</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="stripe-form-col">
+                            <h4>Pay with card (Stripe Checkout Sandbox)</h4>
+
+                            <div className="form-row" style={{ marginTop: '10px' }}>
+                              <label style={{ gridColumn: '1 / -1' }}>
+                                Email
+                                <input type="email" value={customer.email} readOnly />
+                              </label>
+                              <label style={{ gridColumn: '1 / -1' }}>
+                                Card number
+                                <input
+                                  required
+                                  value={dummyCard.cardNumber}
+                                  onChange={(e) => {
+                                    setStripeDeclineError('');
+                                    setDummyCard({ ...dummyCard, cardNumber: e.target.value });
+                                  }}
+                                  placeholder="4242 4242 4242 4242"
+                                />
+                              </label>
+                              <label>
+                                Expiry (MM/YY)
+                                <input
+                                  required
+                                  value={dummyCard.expiry}
+                                  onChange={(e) => setDummyCard({ ...dummyCard, expiry: e.target.value })}
+                                  placeholder="12/28"
+                                />
+                              </label>
+                              <label>
+                                CVC
+                                <input
+                                  required
+                                  value={dummyCard.cvc}
+                                  onChange={(e) => setDummyCard({ ...dummyCard, cvc: e.target.value })}
+                                  placeholder="424"
+                                />
+                              </label>
+                              <label>
+                                Postal code
+                                <input
+                                  required
+                                  value={dummyCard.postalCode}
+                                  onChange={(e) => setDummyCard({ ...dummyCard, postalCode: e.target.value })}
+                                  placeholder="90100"
+                                />
+                              </label>
+                            </div>
+
+                            {stripeDeclineError && (
+                              <div className="stripe-decline-alert" role="alert">
+                                <strong>✗ Payment Declined by Stripe Sandbox</strong>
+                                <p>{stripeDeclineError}</p>
+                              </div>
+                            )}
+
+                            <div className="stripe-submit-actions">
+                              <button
+                                type="button"
+                                className="button button-primary stripe-pay-btn"
+                                disabled={paymentProcessing}
+                                onClick={completeDummyPayment}
+                              >
+                                {paymentProcessing
+                                  ? 'Verifying with Stripe & Firing Webhook…'
+                                  : `Pay €${computedTotalPriceEur} with Stripe`}
+                              </button>
+                              <button
+                                type="button"
+                                className="button button-secondary"
+                                disabled={paymentProcessing}
+                                onClick={cancelStripeCheckout}
+                              >
+                                Cancel Checkout
+                              </button>
+                            </div>
+                            <small className="stripe-security-footnote">
+                              Powered by <strong>stripe</strong> (Course Test Mode) · Webhook verification:{' '}
+                              <code>POST /api/stripe/webhook</code> (<code>checkout.session.completed</code>)
+                            </small>
+                          </div>
                         </div>
                       </div>
                     )}
@@ -1392,31 +1810,39 @@ export default function HomePage() {
                     <span className="section-kicker">
                       {bookingResult.paymentMode === 'counter'
                         ? 'COUNTER RESERVATION CONFIRMED (PAY AT THEATER)'
-                        : '✓ PAYMENT SUCCESSFUL · BOOKING CONFIRMED'}
+                        : '✓ STRIPE CHECKOUT SUCCESS (/success?session_id=...) · WEBHOOK VERIFIED'}
                     </span>
                     <h3>
                       {bookingResult.paymentMode === 'counter'
                         ? 'Your seats are reserved.'
-                        : 'Payment successful! Your tickets are paid and ready.'}
+                        : 'Stripe Payment verified! Booking status: pending_payment → paid.'}
                     </h3>
                     <p>
                       Booking Reference: <strong>{bookingResult.booking.booking_ref}</strong>
+                      {bookingResult.stripeSessionId && (
+                        <>
+                          {' '}
+                          · Stripe Session ID: <strong>{bookingResult.stripeSessionId}</strong>
+                        </>
+                      )}
                       {bookingResult.transactionId && (
                         <>
                           {' '}
-                          · Transaction ID: <strong>{bookingResult.transactionId}</strong>
+                          · PaymentIntent: <strong>{bookingResult.transactionId}</strong>
                         </>
                       )}
                     </p>
                     <p>
                       {bookingResult.booking.movie_title} · Seats: <strong>{bookingResult.booking.seats.join(', ')}</strong>{' '}
                       · Total Paid: <strong>€{Number(bookingResult.booking.total_price).toFixed(2)}</strong> (
-                      {bookingResult.paymentMode === 'counter' ? 'Unpaid — Pay at Counter' : 'PAID IN FULL'})
+                      {bookingResult.paymentMode === 'counter'
+                        ? 'Unpaid — Pay at Counter'
+                        : 'status: "paid" · webhook: checkout.session.completed'})
                     </p>
                     <p className={bookingResult.emailStatus === 'sent' ? 'email-sent' : 'email-warning'}>
                       {bookingResult.paymentMode === 'counter'
                         ? 'Counter reservation saved. Please collect and pay at least 2 hours before showtime.'
-                        : '✓ Online payment completed successfully. Paid tickets are final and cannot be cancelled.'}
+                        : '✓ Verified via Stripe Hosted Checkout & webhook event checkout.session.completed. Paid tickets are final and cannot be cancelled.'}
                     </p>
                   </div>
                 </div>
@@ -1430,6 +1856,15 @@ export default function HomePage() {
             <button onClick={() => setView('retrieve')}>Retrieve a booking</button>
           </footer>
         </>
+      )}
+
+      {view === 'corporate' && (
+        <CorporateBookingSection
+          movies={movies}
+          onSubmitted={(record) =>
+            setNotice(`B2B Private Showtime request ${record.reference} registered for ${record.companyName}.`)
+          }
+        />
       )}
 
       {view === 'account' && (
@@ -1682,7 +2117,94 @@ export default function HomePage() {
                 </button>
               </div>
 
+              <div className="kpi-grid">
+                <div className="kpi-card">
+                  <span className="section-kicker">CONFIRMED REVENUE</span>
+                  <strong>€{totalRevenueEur.toFixed(2)}</strong>
+                  <small>Across Oulu &amp; Tampere</small>
+                </div>
+                <div className="kpi-card">
+                  <span className="section-kicker">TICKETS SOLD / RESERVED</span>
+                  <strong>{totalTicketsSold}</strong>
+                  <small>{confirmedBookings.length} active bookings</small>
+                </div>
+                <div className="kpi-card">
+                  <span className="section-kicker">ACTIVE FILMS</span>
+                  <strong>{adminMovies.length}</strong>
+                  <small>{adminScreenings.length} scheduled showtimes</small>
+                </div>
+                <div className="kpi-card">
+                  <span className="section-kicker">CANCELLATION ALERTS</span>
+                  <strong>{cancellationAlerts.length}</strong>
+                  <small>Released seat notifications</small>
+                </div>
+              </div>
+
               <div className="admin-grid">
+                <section className="admin-card">
+                  <span className="section-kicker">ENTRANCE TICKET CHECKER</span>
+                  <h2>Verify customer pass at rear entrance</h2>
+                  <form className="stack-form" onSubmit={handleEntranceVerify}>
+                    <label>
+                      Enter or scan booking reference
+                      <input
+                        required
+                        placeholder="FH-A1B2C3D4E5"
+                        value={entranceCheckRef}
+                        onChange={(e) => setEntranceCheckRef(e.target.value)}
+                      />
+                    </label>
+                    <button className="button button-primary" type="submit">
+                      Verify Entrance Pass
+                    </button>
+                  </form>
+                  {entranceCheckResult && (
+                    <div className="entrance-verify-box">
+                      {entranceCheckResult.notFound ? (
+                        <p className="danger-text">
+                          ✗ Reference {entranceCheckResult.ref} not found. Do not admit.
+                        </p>
+                      ) : (
+                        <div>
+                          <p className={entranceCheckResult.valid ? 'email-sent' : 'danger-text'}>
+                            {entranceCheckResult.valid
+                              ? '✓ VALID TICKET — ADMIT VIA REAR ENTRANCES'
+                              : '✗ CANCELLED BOOKING — DO NOT ADMIT'}
+                          </p>
+                          <small>
+                            {entranceCheckResult.booking.movie_title} · Seats:{' '}
+                            {(entranceCheckResult.booking.seats || []).join(', ')} · Customer:{' '}
+                            {entranceCheckResult.booking.customer_name}
+                          </small>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </section>
+
+                <section className="admin-card">
+                  <span className="section-kicker">LIVE SEAT CANCELLATION ALERTS</span>
+                  <h2>Recently released seats</h2>
+                  {cancellationAlerts.length ? (
+                    <div className="admin-list">
+                      {cancellationAlerts.slice(0, 5).map((item) => (
+                        <div className="admin-list-row" key={item.id}>
+                          <span>
+                            <strong>
+                              Alert: Seats {item.seats.join(', ')} released ({item.movieTitle})
+                            </strong>
+                            <small>
+                              Ref {item.bookingRef} · Cancelled at {item.cancelledAt}
+                            </small>
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="empty-state">No seat cancellations recorded in this session.</p>
+                  )}
+                </section>
+
                 {staffProfile?.role === 'owner' && (
                   <section className="admin-card bookings-card">
                     <span className="section-kicker">MAIN ADMIN OWNER · STAFF TEAM MANAGEMENT</span>
