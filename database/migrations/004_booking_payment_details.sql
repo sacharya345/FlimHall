@@ -1,0 +1,5 @@
+ALTER TABLE bookings
+ADD COLUMN IF NOT EXISTS payment_status TEXT NOT NULL DEFAULT 'paid';
+
+ALTER TABLE bookings
+ADD COLUMN IF NOT EXISTS transaction_id TEXT;
