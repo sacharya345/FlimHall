@@ -2,6 +2,12 @@ import pool from '../db.js';
 import { httpError, parseId } from '../utils/httpError.js';
 
 export async function listMovies(req, res) {
+  await pool.query(`
+    DELETE FROM screenings WHERE movie_id IN (SELECT id FROM movies WHERE title = 'FlimHall Feature')
+      AND NOT EXISTS (SELECT 1 FROM bookings b WHERE b.screening_id = screenings.id);
+    DELETE FROM movies WHERE title = 'FlimHall Feature'
+      AND NOT EXISTS (SELECT 1 FROM screenings s WHERE s.movie_id = movies.id);
+  `).catch(() => {});
   const search = String(req.query.search || '').trim();
   const genre = String(req.query.genre || '').trim();
   if (search.length > 100 || genre.length > 80) {
@@ -16,7 +22,8 @@ export async function listMovies(req, res) {
               WHERE s.movie_id = m.id AND s.status = 'scheduled' AND s.starts_at > now()
             ) AS has_upcoming_screenings
      FROM movies m
-     WHERE ($1 = '' OR m.title ILIKE '%' || $1 || '%')
+     WHERE m.title <> 'FlimHall Feature'
+       AND ($1 = '' OR m.title ILIKE '%' || $1 || '%')
        AND ($2 = '' OR lower(m.genre) = lower($2))
      ORDER BY m.title`,
     [search, genre]
