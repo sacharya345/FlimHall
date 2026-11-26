@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import CorporateBookingSection from '../components/CorporateBookingSection';
+import Footer from '../components/Footer';
 import SeatMap from '../components/SeatMap';
 import { GENRE_LIST, MOVIES_CATALOG } from '../data/moviesCatalog';
 import { apiRequest } from '../services/api';
@@ -1815,12 +1816,6 @@ export default function HomePage() {
               )}
             </section>
           )}
-          <footer className="site-footer">
-            <span>
-              FLIMHALL <i>·</i> THE SHOW STARTS WITH YOU
-            </span>
-            <button onClick={() => setView('retrieve')}>Retrieve a booking</button>
-          </footer>
         </>
       )}
 
@@ -2538,6 +2533,7 @@ export default function HomePage() {
           )}
         </section>
       )}
+      <Footer onNavigate={setView} />
     </main>
   );
 }
